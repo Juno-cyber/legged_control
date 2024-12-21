@@ -49,7 +49,7 @@ its dependencies following the step below.
 1. You are supposed to clone the OCS2, pinocchio, and hpp-fcl as described in the documentation of OCS2.
    ```
    # Clone OCS2
-   git clone git@github.com:leggedrobotics/ocs2.git
+   git clone https://github.com/leggedrobotics/ocs2.git
    # Clone pinocchio
    git clone --recurse-submodules https://github.com/leggedrobotics/pinocchio.git
    # Clone hpp-fcl
