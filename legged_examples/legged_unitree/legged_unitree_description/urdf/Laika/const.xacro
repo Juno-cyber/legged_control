@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="Laika_description">
+
+    <!-- Constants for robot dimensions -->
+    <xacro:property name="stick_mass" value="0.00001"/>
+
+    <!-- simplified collision value -->
+    <xacro:property name="trunk_width" value="0.241"/>                  <!-- 躯干方块的宽 -->
+    <xacro:property name="trunk_length" value="0.41"/>                 <!-- 躯干方块的长 -->
+    <xacro:property name="trunk_height" value="0.137"/>                 <!-- 躯干方块的高 -->
+    <xacro:property name="hip_radius" value="0.046"/>                   <!-- 髋关节电机的半径 -->
+    <xacro:property name="hip_length" value="0.0576"/>                    <!-- 髋关节电机的高 -->
+    <xacro:property name="thigh_shoulder_radius" value="0.046"/>        <!-- 大腿关节的半径 -->
+    <xacro:property name="thigh_shoulder_length" value="0.0576"/>         <!-- 大腿关节的高 -->
+    <xacro:property name="thigh_shoulder_y_offset" value="-0.0"/>      <!-- 大腿关节相对大腿y轴偏移量 -->  
+
+    <xacro:property name="thigh_width" value="0.05"/>                   <!-- 大腿直杆的宽度 -->
+    <xacro:property name="thigh_height" value="0.03"/>                 <!-- 大腿直杆的高 -->
+    <xacro:property name="thigh_x_offset" value="-0.015"/>              <!-- 大腿直杆相对于大腿关节x轴偏移量 -->
+    <xacro:property name="calf_width" value="0.016"/>                   <!-- 小腿直杆的宽度 -->
+    <xacro:property name="calf_height" value="0.016"/>                  <!-- 小腿直杆的高 -->
+    <xacro:property name="calf_x_offset" value="0.0"/>                  <!-- 大腿直杆相对于大腿关节x轴偏移量 -->
+    <xacro:property name="foot_radius" value="0.02"/>                   <!-- 足端球的半径 -->
+
+    <!-- kinematic value -->
+    <xacro:property name="thigh_offset" value="0.079"/>                <!-- 大腿关节相对髋关节的偏移量 -->  
+    <xacro:property name="thigh_length" value="0.282"/>                   <!-- 大腿长度 -->  
+    <xacro:property name="calf_length" value="0.268"/>                    <!-- 小腿长度 -->  
+
+    <!-- leg offset from trunk center value -->
+    <xacro:property name="leg_offset_x" value="0.26"/>                <!-- 腿部整体相对trunk偏移 -->  
+    <xacro:property name="leg_offset_y" value="0.06"/>                 <!-- 腿部整体相对trunk偏移 --> 
+    <xacro:property name="trunk_offset_z" value="0.01675"/>             <!-- 好像没有具体用到 --> 
+    <xacro:property name="hip_offset" value="0.065"/>                   <!-- 好像没有具体用到 --> 
+
+    <!-- joint limits -->
+    <xacro:property name="damping" value="0"/>                          <!-- 不知道什么抑制 --> 
+    <xacro:property name="friction" value="0"/>                         <!-- 可能是摩擦力 --> 
+    <xacro:property name="hip_position_max" value="${46*pi/180.0}"/>    <!-- hip关节角度上限/rad --> 
+    <xacro:property name="hip_position_min" value="${-46*pi/180.0}"/>   <!-- hip关节角度下限/rad --> 
+    <xacro:property name="hip_velocity_max" value="21"/>                <!-- hip关节角速度上限/rad/s --> 
+    <xacro:property name="hip_torque_max" value="33.5"/>                <!-- hip关节力矩上限 --> 
+    <xacro:property name="thigh_position_max" value="${240*pi/180.0}"/>
+    <xacro:property name="thigh_position_min" value="${-60*pi/180.0}"/>
+    <xacro:property name="thigh_velocity_max" value="21"/>
+    <xacro:property name="thigh_torque_max" value="33.5"/>
+    <xacro:property name="calf_position_max" value="${-52.5*pi/180.0}"/>
+    <xacro:property name="calf_position_min" value="${-154.5*pi/180.0}"/>
+    <xacro:property name="calf_velocity_max" value="21"/>
+    <xacro:property name="calf_torque_max" value="33.5"/>
+    <!-- dynamics inertial value -->
+    <!-- trunk -->
+    <xacro:property name="trunk_mass" value="6.1473"/>
+    <xacro:property name="trunk_com_x" value="-0.0041676"/>
+    <xacro:property name="trunk_com_y" value="-0.00013504"/>
+    <xacro:property name="trunk_com_z" value="0.0053123"/>
+    <xacro:property name="trunk_ixx" value="0.013945"/>
+    <xacro:property name="trunk_ixy" value="-7.7813E-06"/>
+    <xacro:property name="trunk_ixz" value="-0.00021572"/>
+    <xacro:property name="trunk_iyy" value="0.034739"/>
+    <xacro:property name="trunk_iyz" value="-5.8977E-06"/>
+    <xacro:property name="trunk_izz" value="0.042827"/>
+    <!-- hip (left front) -->
+    <xacro:property name="hip_mass" value="0.16507"/>
+    <xacro:property name="hip_com_x" value="-0.020153"/>
+    <xacro:property name="hip_com_y" value="-0.00047045"/>
+    <xacro:property name="hip_com_z" value="-2.873E-05"/>
+    <xacro:property name="hip_ixx" value="0.00012387"/>
+    <xacro:property name="hip_ixy" value="-5.4702E-06"/>
+    <xacro:property name="hip_ixz" value="-1.1555E-06"/>
+    <xacro:property name="hip_iyy" value="0.00019629"/>
+    <xacro:property name="hip_iyz" value="-9.8907E-08"/>
+    <xacro:property name="hip_izz" value="0.00010562"/>
+    <!-- thigh -->
+    <xacro:property name="thigh_mass" value="0.88326"/>
+    <xacro:property name="thigh_com_x" value="-0.0047729"/>
+    <xacro:property name="thigh_com_y" value="0.0050219"/>
+    <xacro:property name="thigh_com_z" value="-0.084576"/>
+    <xacro:property name="thigh_ixx" value="0.0040857"/>
+    <xacro:property name="thigh_ixy" value="-9.2676E-07"/>
+    <xacro:property name="thigh_ixz" value="-0.00047162"/>
+    <xacro:property name="thigh_iyy" value="0.0045742"/>
+    <xacro:property name="thigh_iyz" value="3.4884E-05"/>
+    <xacro:property name="thigh_izz" value="0.00059428"/>
+    <!-- calf -->
+    <xacro:property name="calf_mass" value="0.26525"/>
+    <xacro:property name="calf_com_x" value="0.0036489"/>
+    <xacro:property name="calf_com_y" value="0.00033259"/>
+    <xacro:property name="calf_com_z" value="-0.12776"/>
+    <xacro:property name="calf_ixx" value="0.0011143"/>
+    <xacro:property name="calf_ixy" value="-3.9814E-08"/>
+    <xacro:property name="calf_ixz" value="6.5633E-05"/>
+    <xacro:property name="calf_iyy" value="0.0011369"/>
+    <xacro:property name="calf_iyz" value="-1.5907E-07"/>
+    <xacro:property name="calf_izz" value="3.328E-05"/>
+    <!-- foot -->
+    <xacro:property name="foot_mass" value="0.025978"/>
+</robot>
