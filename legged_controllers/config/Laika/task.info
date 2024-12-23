@@ -154,13 +154,13 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.3     ; p_base_z
+   (8,0)  0.8     ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
 
    ;; Leg Joint Positions: [LF, LH, RF, RH] ;;
-   (12,0) -0.50   ; LF_HAA
+   (12,0) -0.20   ; LF_HAA
    (13,0)  0.72   ; LF_HFE
    (14,0) -1.44   ; LF_KFE
    (15,0) -0.20   ; LH_HAA
