@@ -62,7 +62,7 @@
     <xacro:property name="trunk_iyz" value="-5.8977E-06"/>
     <xacro:property name="trunk_izz" value="0.042827"/>
     <!-- hip (left front) -->
-    <xacro:property name="hip_mass" value="0.16507"/>
+    <xacro:property name="hip_mass" value="0.85"/>   <!-- 0.16507 -->
     <xacro:property name="hip_com_x" value="-0.020153"/>
     <xacro:property name="hip_com_y" value="-0.00047045"/>
     <xacro:property name="hip_com_z" value="-2.873E-05"/>
