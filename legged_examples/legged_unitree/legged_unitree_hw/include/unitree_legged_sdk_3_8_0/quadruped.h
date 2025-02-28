@@ -16,7 +16,8 @@ enum class LeggedType {
 	Aliengo,
 	A1,
 	Go1,
-	B1
+	B1,
+	Laika
 };
 
 

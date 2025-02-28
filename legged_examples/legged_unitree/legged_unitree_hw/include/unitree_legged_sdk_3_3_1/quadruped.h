@@ -14,7 +14,8 @@ namespace UNITREE_LEGGED_SDK
 enum class LeggedType
 {
   Aliengo,
-  A1
+  A1,
+  Laika
 };
 
 enum class HighLevelType
