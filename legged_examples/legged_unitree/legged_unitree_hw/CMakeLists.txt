@@ -28,6 +28,11 @@ include_directories(
 
 link_directories(lib)
 
+# 添加子目录
+add_subdirectory(SOEM)
+add_subdirectory(run_imu)
+add_subdirectory(run_soem)
+
 set(SOURCE src/legged_unitree_hw.cpp src/UnitreeHW.cpp)
 
 add_executable(${PROJECT_NAME}_3_3_1
@@ -39,6 +44,7 @@ target_compile_definitions(${PROJECT_NAME}_3_3_1 PRIVATE UNITREE_SDK_3_3_1)
 target_link_libraries(${PROJECT_NAME}_3_3_1
         ${catkin_LIBRARIES}
         libunitree_legged_sdk_amd64_3_3_1.so lcm
+        run_imu run_soem 
         )
 
 add_executable(${PROJECT_NAME}_3_8_0
@@ -50,6 +56,7 @@ target_compile_definitions(${PROJECT_NAME}_3_8_0 PRIVATE UNITREE_SDK_3_8_0)
 target_link_libraries(${PROJECT_NAME}_3_8_0
         ${catkin_LIBRARIES}
         libunitree_legged_sdk_amd64_3_8_0.a
+        run_imu run_soem
 )
 
 #########################
