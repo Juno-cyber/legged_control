@@ -13,6 +13,9 @@
 
 #include <sensor_msgs/Joy.h>
 #include <std_msgs/Int16MultiArray.h>
+#include "yesense_main.h"
+#include "soem_dog.h"
+
 
 namespace legged {
 bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
@@ -43,7 +46,7 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   } else if (robot_type == "aliengo") {
     safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::Aliengo);
   }else if(robot_type == "laika"){
-    safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::Laika);
+    safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::A1);
   }
 #elif UNITREE_SDK_3_8_0
   ROS_INFO("Robot type: %s", robot_type.c_str());
@@ -64,6 +67,8 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   // udp_->Recv();
   // udp_->GetRecv(lowState_);
+  // ROS_INFO("Robot Read!");
+  runsoem();
 
   for (int i = 0; i < 12; ++i) {
     jointData_[i].pos_ = lowState_.motorState[i].q;
@@ -111,6 +116,7 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
   safety_->PowerProtect(lowCmd_, lowState_, powerLimit_);
   // udp_->SetSend(lowCmd_);
   // udp_->Send();
+  // ROS_INFO("Robot Write!");
 }
 
 bool UnitreeHW::setupJoints() {
