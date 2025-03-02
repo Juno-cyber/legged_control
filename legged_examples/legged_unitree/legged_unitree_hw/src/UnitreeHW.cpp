@@ -13,9 +13,6 @@
 
 #include <sensor_msgs/Joy.h>
 #include <std_msgs/Int16MultiArray.h>
-#include "yesense_main.h"
-#include "soem_dog.h"
-
 
 namespace legged {
 bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
@@ -62,61 +59,6 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   joyPublisher_ = root_nh.advertise<sensor_msgs::Joy>("/joy", 10);
   contactPublisher_ = root_nh.advertise<std_msgs::Int16MultiArray>(std::string("/contact"), 10);
   return true;
-}
-
-void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
-  // udp_->Recv();
-  // udp_->GetRecv(lowState_);
-  // ROS_INFO("Robot Read!");
-  runsoem();
-
-  for (int i = 0; i < 12; ++i) {
-    jointData_[i].pos_ = lowState_.motorState[i].q;
-    jointData_[i].vel_ = lowState_.motorState[i].dq;
-    jointData_[i].tau_ = lowState_.motorState[i].tauEst;
-  }
-
-  imuData_.ori_[0] = lowState_.imu.quaternion[1];
-  imuData_.ori_[1] = lowState_.imu.quaternion[2];
-  imuData_.ori_[2] = lowState_.imu.quaternion[3];
-  imuData_.ori_[3] = lowState_.imu.quaternion[0];
-  imuData_.angularVel_[0] = lowState_.imu.gyroscope[0];
-  imuData_.angularVel_[1] = lowState_.imu.gyroscope[1];
-  imuData_.angularVel_[2] = lowState_.imu.gyroscope[2];
-  imuData_.linearAcc_[0] = lowState_.imu.accelerometer[0];
-  imuData_.linearAcc_[1] = lowState_.imu.accelerometer[1];
-  imuData_.linearAcc_[2] = lowState_.imu.accelerometer[2];
-
-  for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i) {
-    contactState_[i] = lowState_.footForce[i] > contactThreshold_;
-  }
-
-  // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
-  std::vector<std::string> names = hybridJointInterface_.getNames();
-  for (const auto& name : names) {
-    HybridJointHandle handle = hybridJointInterface_.getHandle(name);
-    handle.setFeedforward(0.);
-    handle.setVelocityDesired(0.);
-    handle.setKd(3.);
-  }
-
-  updateJoystick(time);
-  updateContact(time);
-}
-
-void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/) {
-  for (int i = 0; i < 12; ++i) {
-    lowCmd_.motorCmd[i].q = static_cast<float>(jointData_[i].posDes_);
-    lowCmd_.motorCmd[i].dq = static_cast<float>(jointData_[i].velDes_);
-    lowCmd_.motorCmd[i].Kp = static_cast<float>(jointData_[i].kp_);
-    lowCmd_.motorCmd[i].Kd = static_cast<float>(jointData_[i].kd_);
-    lowCmd_.motorCmd[i].tau = static_cast<float>(jointData_[i].ff_);
-  }
-  safety_->PositionLimit(lowCmd_);
-  safety_->PowerProtect(lowCmd_, lowState_, powerLimit_);
-  // udp_->SetSend(lowCmd_);
-  // udp_->Send();
-  // ROS_INFO("Robot Write!");
 }
 
 bool UnitreeHW::setupJoints() {
@@ -214,6 +156,122 @@ void UnitreeHW::updateContact(const ros::Time& time) {
     contactMsg.data.push_back(lowState_.footForce[i]);
   }
   contactPublisher_.publish(contactMsg);
+}
+
+void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,::protocol_info_t* imu,UNITREE_LEGGED_SDK::LowState* State_)
+{
+  // 确保 motors 和 State_ 是有效的指针
+  if (!motors_rec || !State_) {
+    return; // 如果指针为空，直接返回
+  }  
+
+  // 遍历 12 个电机
+  for (int i = 0; i < MOTOR_COUNT; i++) {
+    // 将 Soem_Motor 的数据赋值给 LowState 的 MotorState
+    State_->motorState[i].q = motors_rec[i].position;          // 角度
+    State_->motorState[i].dq = motors_rec[i].velocity;   // 角速度
+    State_->motorState[i].tauEst = motors_rec[i].torque;    // 力矩
+
+    // 将imu的数据赋值给LowState的IMU
+    State_->imu.accelerometer[0] = imu->accel.x;
+    State_->imu.accelerometer[1] = imu->accel.y;
+    State_->imu.accelerometer[2] = imu->accel.z;
+    State_->imu.gyroscope[0] = imu->angle_rate.x;
+    State_->imu.gyroscope[1] = imu->angle_rate.y;
+    State_->imu.gyroscope[2] = imu->angle_rate.z;
+    State_->imu.quaternion[0] = imu->attitude.quaternion_data0;
+    State_->imu.quaternion[1] = imu->attitude.quaternion_data1;
+    State_->imu.quaternion[2] = imu->attitude.quaternion_data2;
+    State_->imu.quaternion[3] = imu->attitude.quaternion_data3;
+    State_->imu.rpy[0] = imu->attitude.roll;
+    State_->imu.rpy[1] = imu->attitude.pitch;
+    State_->imu.rpy[2] = imu->attitude.yaw;
+    State_->imu.temperature = (int8_t)imu->sensor_temp;
+
+    // 其他字段可以根据需要初始化或保留默认值
+    // State_->motorState[i].q_raw = 0;      // 原始角度
+    // State_->motorState[i].dq_raw = 0; // 原始角速度    
+    // State_->motorState[i].mode = 0;                     // 电机模式
+    // State_->motorState[i].ddq = 0.0f;                   // 加速度
+    // State_->motorState[i].ddq_raw = 0.0f;               // 原始加速度
+    // State_->motorState[i].temperature = 0;              // 温度
+    // State_->motorState[i].reserve[0] = 0;               // 保留字段
+    // State_->motorState[i].reserve[1] = 0;               // 保留字段
+  }  
+}
+
+void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cmd_)
+{
+  // 确保 motors 和 State_ 是有效的指针
+  if (!motors || !Cmd_) {
+    return; // 如果指针为空，直接返回
+  }  
+
+  // 遍历 12 个电机
+  for (int i = 0; i < MOTOR_COUNT; i++) {
+    // 将 Soem_Motor 的数据赋值给 LowState 的 MotorState
+    motors[i].angle = Cmd_->motorCmd[i].q;    // 角度
+    motors[i].angular_vel = Cmd_->motorCmd[i].dq;   // 角速度
+    motors[i].torque = Cmd_->motorCmd[i].tau;    // 力矩
+    motors[i].kp = Cmd_->motorCmd[i].Kp;   // 角速度
+    motors[i].kd = Cmd_->motorCmd[i].Kd;     // 力矩
+  }  
+}
+
+void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
+  //读取电机数据和IMU数据
+  runsoem();
+  run_imu();
+  updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
+
+  for (int i = 0; i < 12; ++i) {
+    jointData_[i].pos_ = lowState_.motorState[i].q;
+    jointData_[i].vel_ = lowState_.motorState[i].dq;
+    jointData_[i].tau_ = lowState_.motorState[i].tauEst;
+  }
+
+  imuData_.ori_[0] = lowState_.imu.quaternion[1];
+  imuData_.ori_[1] = lowState_.imu.quaternion[2];
+  imuData_.ori_[2] = lowState_.imu.quaternion[3];
+  imuData_.ori_[3] = lowState_.imu.quaternion[0];
+  imuData_.angularVel_[0] = lowState_.imu.gyroscope[0];
+  imuData_.angularVel_[1] = lowState_.imu.gyroscope[1];
+  imuData_.angularVel_[2] = lowState_.imu.gyroscope[2];
+  imuData_.linearAcc_[0] = lowState_.imu.accelerometer[0];
+  imuData_.linearAcc_[1] = lowState_.imu.accelerometer[1];
+  imuData_.linearAcc_[2] = lowState_.imu.accelerometer[2];
+
+  for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i) {
+    contactState_[i] = lowState_.footForce[i] > contactThreshold_;
+  }
+
+  // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
+  std::vector<std::string> names = hybridJointInterface_.getNames();
+  for (const auto& name : names) {
+    HybridJointHandle handle = hybridJointInterface_.getHandle(name);
+    handle.setFeedforward(0.);
+    handle.setVelocityDesired(0.);
+    handle.setKd(3.);
+  }
+
+  updateJoystick(time);
+  updateContact(time);
+}
+
+void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/) {
+  for (int i = 0; i < 12; ++i) {
+    lowCmd_.motorCmd[i].q = static_cast<float>(jointData_[i].posDes_);
+    lowCmd_.motorCmd[i].dq = static_cast<float>(jointData_[i].velDes_);
+    lowCmd_.motorCmd[i].Kp = static_cast<float>(jointData_[i].kp_);
+    lowCmd_.motorCmd[i].Kd = static_cast<float>(jointData_[i].kd_);
+    lowCmd_.motorCmd[i].tau = static_cast<float>(jointData_[i].ff_);
+  }
+  safety_->PositionLimit(lowCmd_);
+  safety_->PowerProtect(lowCmd_, lowState_, powerLimit_);
+
+  //写入电机数据
+  updateLowCmd(Soem_motors, &lowCmd_);
+  runsoem();
 }
 
 }  // namespace legged

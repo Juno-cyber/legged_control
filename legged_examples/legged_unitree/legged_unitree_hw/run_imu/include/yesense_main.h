@@ -4,8 +4,14 @@
 extern "C" {
 #endif
 
+#include     "analysis_data.h"
+
+
+
 
 int run_imu();
+extern protocol_info_t g_output_info;
+
 
 
 

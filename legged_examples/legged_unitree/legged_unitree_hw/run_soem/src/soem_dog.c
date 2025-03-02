@@ -15,7 +15,7 @@ char IOmap[512];
 OSAL_THREAD_HANDLE thread1;
 int expectedWKC;
 boolean needlf=FALSE;
-volatile int wkc;
+int wkc;
 boolean inOP=FALSE;
 uint8 currentgroup = 0;
 boolean forceByteAlignment = FALSE;
@@ -23,11 +23,11 @@ boolean forceByteAlignment = FALSE;
 int oloop, iloop, chk;
 
 // 初始化电机数组
-volatile Motor motors[MOTOR_COUNT] = {0};
-volatile MotorData motors_rec[MOTOR_COUNT] = {0};
+Soem_Motor Soem_motors[MOTOR_COUNT] = {0};
+Soem_MotorData Soem_motors_rec[MOTOR_COUNT] = {0};
 
 // 初始化一个电机变量
-void motor_set(Motor *motor,float angle, float angular_velocity, float torque, float kp, float kd) {
+void motor_set(Soem_Motor *motor,float angle, float angular_velocity, float torque, float kp, float kd) {
    motor->angle = angle;
    motor->angular_vel = angular_velocity;
    motor->torque = torque; 
@@ -55,7 +55,7 @@ void set_send_data(uint16_t control_command)
       }
 
       // 将数据拷贝到缓冲区中
-      memcpy(IOmap + COMMAND_SIZE + offset, &(motors[i].angle), MOTOR_DATA_SIZE);
+      memcpy(IOmap + COMMAND_SIZE + offset, &(Soem_motors[i].angle), MOTOR_DATA_SIZE);
 
    }
 }
@@ -69,7 +69,7 @@ float bytesToFloat(const uint8_t* bytes) {
 }
 
 // 解析报文并存储到电机结构体数组中
-void parseMotorData(const uint8_t* data, MotorData* motors, uint16_t motorCount) {
+void parseMotorData(const uint8_t* data, Soem_MotorData* motors, uint16_t motorCount) {
     const uint8_t* ptr = data + 2;  // 跳过电机数量的2字节
     for (int i = 0; i < motorCount; i++) {
         motors[i].id = (ptr[0] << 0) | (ptr[1] << 8);
@@ -88,7 +88,7 @@ void parseMotorData(const uint8_t* data, MotorData* motors, uint16_t motorCount)
 void motors_disable(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
    for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&motors[i], 0, 0, 0, 0, 0);
+      motor_set(&Soem_motors[i], 0, 0, 0, 0, 0);
    }
    set_send_data(0x0002);
 }
@@ -96,7 +96,7 @@ void motors_disable(){
 void motors_set_zero(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
    for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&motors[i], 0, 0, 0, 0, 0);
+      motor_set(&Soem_motors[i], 0, 0, 0, 0, 0);
    }
    set_send_data(0x0003);
 }
@@ -104,7 +104,7 @@ void motors_set_zero(){
 void motors_enable(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
    for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&motors[i], 0, 0, 0, 0, 0);
+      motor_set(&Soem_motors[i], 0, 0, 0, 0, 0);
    }
    set_send_data(0x0001);
 }
@@ -112,7 +112,7 @@ void motors_enable(){
 void motors_send_data(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
    for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&motors[i], 5.2, 1, 1, 20, 1);
+      motor_set(&Soem_motors[i], 5.2, 1, 1, 20, 1);
    }
    set_send_data(0x0004);
 }
@@ -120,7 +120,7 @@ void motors_send_data(){
 void motors_mode_set(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
    for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&motors[i], 0, 0, 0, 0, 0);
+      motor_set(&Soem_motors[i], 0, 0, 0, 0, 0);
    }
    set_send_data(0x0005);
 }
@@ -159,15 +159,15 @@ void soem_write_read()
       printf(" \nT:%"PRId64"\r\n",ec_DCtime);
 
       //解析报文
-      parseMotorData(ec_slave[0].inputs, motors_rec, MOTOR_COUNT);
+      parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
       // 打印解析结果
       for (int i = 0; i < MOTOR_COUNT; i++) {
          printf("Motor %d:\n", i + 1);
-         printf("  ID: %d\n", motors_rec[i].id);
-         printf("  State: %d\n", motors_rec[i].state);
-         printf("  Position: %.2f\n", motors_rec[i].position);
-         printf("  Velocity: %.2f\n", motors_rec[i].velocity);
-         printf("  Torque: %.2f\n", motors_rec[i].torque);
+         printf("  ID: %d\n", Soem_motors_rec[i].id);
+         printf("  State: %d\n", Soem_motors_rec[i].state);
+         printf("  Position: %.2f\n", Soem_motors_rec[i].position);
+         printf("  Velocity: %.2f\n", Soem_motors_rec[i].velocity);
+         printf("  Torque: %.2f\n", Soem_motors_rec[i].torque);
       }
 
       needlf = TRUE;

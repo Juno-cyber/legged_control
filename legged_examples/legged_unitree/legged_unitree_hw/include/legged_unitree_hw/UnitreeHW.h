@@ -6,6 +6,8 @@
 #pragma once
 
 #include <legged_hw/LeggedHW.h>
+#include "yesense_main.h"
+#include "soem_dog.h"
 
 #ifdef UNITREE_SDK_3_3_1
 #include "unitree_legged_sdk_3_3_1/safety.h"
@@ -75,6 +77,9 @@ class UnitreeHW : public LeggedHW {
   bool setupImu();
 
   bool setupContactSensor(ros::NodeHandle& nh);
+
+  void updateLowState(::Soem_MotorData *motors_rec,::protocol_info_t* imu, UNITREE_LEGGED_SDK::LowState *State_);
+  void updateLowCmd(::Soem_Motor *motors, UNITREE_LEGGED_SDK::LowCmd *Cmd_);
 
   std::shared_ptr<UNITREE_LEGGED_SDK::UDP> udp_;
   std::shared_ptr<UNITREE_LEGGED_SDK::Safety> safety_;

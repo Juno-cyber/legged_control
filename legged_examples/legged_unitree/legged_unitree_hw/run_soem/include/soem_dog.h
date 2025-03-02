@@ -18,14 +18,14 @@ extern "C" {
 // 计算每个电机数据在缓冲区中的偏移量
 #define MOTOR_OFFSET(motor_id) (motor_id * MOTOR_DATA_SIZE)
 
-// 定义电机结构体
+// 定义电机发送结构体数据
 typedef struct {
    float angle;       // 角度
    float angular_vel; // 角速度
    float torque;      // 力矩
    float kp;          // 比例增益
    float kd;          // 微分增益
-} Motor;
+} Soem_Motor;
 
 // 定义电机接收数据结构体
 typedef struct {
@@ -34,7 +34,7 @@ typedef struct {
     float position;     // 电机位置
     float velocity;     // 电机速度
     float torque;       // 电机扭矩
-} MotorData;
+} Soem_MotorData;
 
 void soem_write_read();
 int runsoem();
@@ -42,8 +42,8 @@ int runsoem();
 
 
 // 拓展电机数组范围
-extern volatile Motor motors[MOTOR_COUNT];
-extern volatile MotorData motors_rec[MOTOR_COUNT];
+extern Soem_Motor Soem_motors[MOTOR_COUNT];
+extern Soem_MotorData Soem_motors_rec[MOTOR_COUNT];
 
 
 #ifdef __cplusplus
