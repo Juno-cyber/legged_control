@@ -222,7 +222,7 @@ void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   //读取电机数据和IMU数据
   runsoem();
   run_imu();
-  updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
+  // updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
 
   for (int i = 0; i < 12; ++i) {
     jointData_[i].pos_ = lowState_.motorState[i].q;
@@ -270,8 +270,8 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
   safety_->PowerProtect(lowCmd_, lowState_, powerLimit_);
 
   //写入电机数据
-  updateLowCmd(Soem_motors, &lowCmd_);
-  runsoem();
+  // updateLowCmd(Soem_motors, &lowCmd_);
+  // runsoem();
 }
 
 }  // namespace legged

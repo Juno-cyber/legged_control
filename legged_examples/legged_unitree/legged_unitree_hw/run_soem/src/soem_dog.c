@@ -146,29 +146,29 @@ void soem_write_read()
    if(wkc >= expectedWKC)
    {
       printf("√ 6/6,date received!\n");
-      printf("Processdata WKC %d ,\n slve1 O:",wkc);
-      for(int j = 0 ; j < oloop; j++)
-      {
-         printf(" %2.2x", *(ec_slave[0].outputs + j));
-      }
-      printf("\n I:");                
-      for(int j = 0 ; j < iloop; j++)
-      {
-         printf(" %2.2x", *(ec_slave[0].inputs + j));
-      }
-      printf(" \nT:%"PRId64"\r\n",ec_DCtime);
+      // printf("Processdata WKC %d ,\n slve1 O:",wkc);
+      // for(int j = 0 ; j < oloop; j++)
+      // {
+      //    printf(" %2.2x", *(ec_slave[0].outputs + j));
+      // }
+      // printf("\n I:");                
+      // for(int j = 0 ; j < iloop; j++)
+      // {
+      //    printf(" %2.2x", *(ec_slave[0].inputs + j));
+      // }
+      // printf(" \nT:%"PRId64"\r\n",ec_DCtime);
 
       //解析报文
       parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
       // 打印解析结果
-      for (int i = 0; i < MOTOR_COUNT; i++) {
-         printf("Motor %d:\n", i + 1);
-         printf("  ID: %d\n", Soem_motors_rec[i].id);
-         printf("  State: %d\n", Soem_motors_rec[i].state);
-         printf("  Position: %.2f\n", Soem_motors_rec[i].position);
-         printf("  Velocity: %.2f\n", Soem_motors_rec[i].velocity);
-         printf("  Torque: %.2f\n", Soem_motors_rec[i].torque);
-      }
+      // for (int i = 0; i < MOTOR_COUNT; i++) {
+      //    printf("Motor %d:\n", i + 1);
+      //    printf("  ID: %d\n", Soem_motors_rec[i].id);
+      //    printf("  State: %d\n", Soem_motors_rec[i].state);
+      //    printf("  Position: %.2f\n", Soem_motors_rec[i].position);
+      //    printf("  Velocity: %.2f\n", Soem_motors_rec[i].velocity);
+      //    printf("  Torque: %.2f\n", Soem_motors_rec[i].torque);
+      // }
 
       needlf = TRUE;
       osal_usleep(5000);

@@ -9,6 +9,7 @@
 #include     <sys/time.h>
 #include     <string.h>
 #include     <getopt.h>
+#include     "analysis_data.h"
 #include     "yesense_main.h"
 
 
@@ -35,7 +36,7 @@ int run_imu()
     int pos = 0;
 
     speed_t speed = B460800;
-    dev = "/dev/ttyACM0";	
+    dev = "/dev/ttyACM2";	
     fd = open(dev, O_RDWR | O_NONBLOCK| O_NOCTTY | O_NDELAY); 
     if (fd < 0)	{
         printf("Can't Open Serial Port!\n");
@@ -58,53 +59,56 @@ int run_imu()
 	
     memset(buffer,0,sizeof(buffer));
 
-    nread = read(fd, buffer, RX_BUF_LEN);
-    if(nread > 0)
+    for (int i = 0; i < 1; i++)
     {
-        //printf("nread = %d\n", nread);
-        memcpy(g_recv_buf + g_recv_buf_idx, buffer, nread);             
-        g_recv_buf_idx += nread;
-    }
+	nread = read(fd, buffer, RX_BUF_LEN);
+	if(nread > 0)
+	{
+	    //printf("nread = %d\n", nread);
+	    memcpy(g_recv_buf + g_recv_buf_idx, buffer, nread);             
+	    g_recv_buf_idx += nread;
+	}
 
-    cnt = g_recv_buf_idx;
-    pos = 0;
-    if(cnt < YIS_OUTPUT_MIN_BYTES)
-    {
-        return -1;
-    }
-
-    while(cnt > (unsigned int)0)
-    {
-        int ret = analysis_data(g_recv_buf + pos, cnt, &g_output_info);
-        if(analysis_done == ret)	/*未查找到帧头*/
+        cnt = g_recv_buf_idx;
+        pos = 0;
+        if(cnt < YIS_OUTPUT_MIN_BYTES)
         {
-            pos++;
-            cnt--;
+            continue;
         }
-        else if(data_len_err == ret)
-        {
-            break;
-        }
-        else if(crc_err == ret || analysis_ok == ret)	 /*删除已解析完的完整一帧*/
-        {
-            output_data_header_t *header = (output_data_header_t *)(g_recv_buf + pos);
-            unsigned int frame_len = header->len + YIS_OUTPUT_MIN_BYTES;
-            cnt -= frame_len;
-            pos += frame_len;
-            //memcpy(g_recv_buf, g_recv_buf + pos, cnt);
 
-            if(analysis_ok == ret)
+        while(cnt > (unsigned int)0)
+        {
+            int ret = analysis_data(g_recv_buf + pos, cnt, &g_output_info);
+            if(analysis_done == ret)	/*未查找到帧头*/
             {
-                printf("pitch: %f, roll: %f, yaw: %f\n", 
-                g_output_info.attitude.pitch, g_output_info.attitude.roll, g_output_info.attitude.yaw);
+                pos++;
+                cnt--;
             }
-        }
-    }
+            else if(data_len_err == ret)
+            {
+                break;
+            }
+            else if(crc_err == ret || analysis_ok == ret)	 /*删除已解析完的完整一帧*/
+            {
+                output_data_header_t *header = (output_data_header_t *)(g_recv_buf + pos);
+                unsigned int frame_len = header->len + YIS_OUTPUT_MIN_BYTES;
+                cnt -= frame_len;
+                pos += frame_len;
+                //memcpy(g_recv_buf, g_recv_buf + pos, cnt);
 
-    memcpy(g_recv_buf, g_recv_buf + pos, cnt);
-    g_recv_buf_idx = cnt;
-    tcflush(fd,TCIFLUSH);
-    usleep(10000);
+                if(analysis_ok == ret)
+                {
+                    printf("pitch: %f, roll: %f, yaw: %f\n", 
+			  g_output_info.attitude.pitch, g_output_info.attitude.roll, g_output_info.attitude.yaw);
+                }
+	    }
+	}
+
+        memcpy(g_recv_buf, g_recv_buf + pos, cnt);
+        g_recv_buf_idx = cnt;
+	tcflush(fd,TCIFLUSH);
+	usleep(10000);
+    }
 
     close(fd);
 }
