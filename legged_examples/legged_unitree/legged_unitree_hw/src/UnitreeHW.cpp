@@ -24,13 +24,14 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
   setupJoints();
   setupImu();
+  init_imu();                                       //imu初始化
   setupContactSensor(robot_hw_nh);
 
-// #ifdef UNITREE_SDK_3_3_1
-//   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL);
-// #elif UNITREE_SDK_3_8_0
-//   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL, 8090, "192.168.123.10", 8007);
-// #endif
+  // #ifdef UNITREE_SDK_3_3_1
+  //   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL);
+  // #elif UNITREE_SDK_3_8_0
+  //   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL, 8090, "192.168.123.10", 8007);
+  // #endif
 
   // udp_->InitCmdData(lowCmd_);
 
@@ -220,7 +221,7 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
 
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   //读取电机数据和IMU数据
-  runsoem();
+  // runsoem();
   run_imu();
   // updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
 

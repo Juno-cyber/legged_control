@@ -6,8 +6,9 @@ extern "C" {
 #include     "analysis_data.h"
 
 int run_imu();
-
-
+void init_imu();
+void close_imu();
+int run_imu_new();
 
 #ifdef __cplusplus
 }
