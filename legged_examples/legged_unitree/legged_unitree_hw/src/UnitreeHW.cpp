@@ -26,13 +26,13 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   setupImu();
   setupContactSensor(robot_hw_nh);
 
-#ifdef UNITREE_SDK_3_3_1
-  udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL);
-#elif UNITREE_SDK_3_8_0
-  udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL, 8090, "192.168.123.10", 8007);
-#endif
+// #ifdef UNITREE_SDK_3_3_1
+//   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL);
+// #elif UNITREE_SDK_3_8_0
+//   udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL, 8090, "192.168.123.10", 8007);
+// #endif
 
-  udp_->InitCmdData(lowCmd_);
+  // udp_->InitCmdData(lowCmd_);
 
   std::string robot_type;
   root_nh.getParam("robot_type", robot_type);
