@@ -24,7 +24,7 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
   setupJoints();
   setupImu();
-  init_imu();                                       //imu初始化
+  // init_imu();                                       //imu初始化
   setupContactSensor(robot_hw_nh);
 
   // #ifdef UNITREE_SDK_3_3_1
@@ -222,7 +222,7 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   //读取电机数据和IMU数据
   // runsoem();
-  run_imu();
+  // run_imu();
   // updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
 
   for (int i = 0; i < 12; ++i) {
