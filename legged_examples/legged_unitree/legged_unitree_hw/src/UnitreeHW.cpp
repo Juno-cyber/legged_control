@@ -58,7 +58,21 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
   joyPublisher_ = root_nh.advertise<sensor_msgs::Joy>("/joy", 10);
   contactPublisher_ = root_nh.advertise<std_msgs::Int16MultiArray>(std::string("/contact"), 10);
+
+  // 订阅 IMU 数据
+  imu_sub_ = root_nh.subscribe("data", 100, &UnitreeHW::imuCallback, this);
+  // 订阅位姿数据
+  pose_sub_ = root_nh.subscribe("pose", 100, &UnitreeHW::poseCallback, this); 
+
   return true;
+}
+
+void UnitreeHW::imuCallback(const sensor_msgs::Imu::ConstPtr& msg) {
+    imu_data_ = *msg; // 存储 IMU 数据
+}
+
+void UnitreeHW::poseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg) {
+    pose_data_ = *msg; // 存储位姿数据
 }
 
 bool UnitreeHW::setupJoints() {
@@ -158,7 +172,7 @@ void UnitreeHW::updateContact(const ros::Time& time) {
   contactPublisher_.publish(contactMsg);
 }
 
-void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,::protocol_info_t* imu,UNITREE_LEGGED_SDK::LowState* State_)
+void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,UNITREE_LEGGED_SDK::LowState* State_)
 {
   // 确保 motors 和 State_ 是有效的指针
   if (!motors_rec || !State_) {
@@ -171,23 +185,6 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,::protocol_info_t* i
     State_->motorState[i].q = motors_rec[i].position;          // 角度
     State_->motorState[i].dq = motors_rec[i].velocity;   // 角速度
     State_->motorState[i].tauEst = motors_rec[i].torque;    // 力矩
-
-    // 将imu的数据赋值给LowState的IMU
-    State_->imu.accelerometer[0] = imu->accel.x;
-    State_->imu.accelerometer[1] = imu->accel.y;
-    State_->imu.accelerometer[2] = imu->accel.z;
-    State_->imu.gyroscope[0] = imu->angle_rate.x;
-    State_->imu.gyroscope[1] = imu->angle_rate.y;
-    State_->imu.gyroscope[2] = imu->angle_rate.z;
-    State_->imu.quaternion[0] = imu->attitude.quaternion_data0;
-    State_->imu.quaternion[1] = imu->attitude.quaternion_data1;
-    State_->imu.quaternion[2] = imu->attitude.quaternion_data2;
-    State_->imu.quaternion[3] = imu->attitude.quaternion_data3;
-    State_->imu.rpy[0] = imu->attitude.roll;
-    State_->imu.rpy[1] = imu->attitude.pitch;
-    State_->imu.rpy[2] = imu->attitude.yaw;
-    State_->imu.temperature = (int8_t)imu->sensor_temp;
-
     // 其他字段可以根据需要初始化或保留默认值
     // State_->motorState[i].q_raw = 0;      // 原始角度
     // State_->motorState[i].dq_raw = 0; // 原始角速度    
@@ -198,6 +195,49 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,::protocol_info_t* i
     // State_->motorState[i].reserve[0] = 0;               // 保留字段
     // State_->motorState[i].reserve[1] = 0;               // 保留字段
   }  
+  // 将imu的数据赋值给LowState的IMU
+  // State_->imu.accelerometer[0] = imu->accel.x;
+  // State_->imu.accelerometer[1] = imu->accel.y;
+  // State_->imu.accelerometer[2] = imu->accel.z;
+  // State_->imu.gyroscope[0] = imu->angle_rate.x;
+  // State_->imu.gyroscope[1] = imu->angle_rate.y;
+  // State_->imu.gyroscope[2] = imu->angle_rate.z;
+  // State_->imu.quaternion[0] = imu->attitude.quaternion_data0;
+  // State_->imu.quaternion[1] = imu->attitude.quaternion_data1;
+  // State_->imu.quaternion[2] = imu->attitude.quaternion_data2;
+  // State_->imu.quaternion[3] = imu->attitude.quaternion_data3;
+  // State_->imu.rpy[0] = imu->attitude.roll;
+  // State_->imu.rpy[1] = imu->attitude.pitch;
+  // State_->imu.rpy[2] = imu->attitude.yaw;
+  // State_->imu.temperature = (int8_t)imu->sensor_temp;  
+
+  // 使用订阅到的 IMU 数据更新 State_
+  State_->imu.accelerometer[0] = imu_data_.linear_acceleration.x;
+  State_->imu.accelerometer[1] = imu_data_.linear_acceleration.y;
+  State_->imu.accelerometer[2] = imu_data_.linear_acceleration.z;
+  State_->imu.gyroscope[0] = imu_data_.angular_velocity.x;
+  State_->imu.gyroscope[1] = imu_data_.angular_velocity.y;
+  State_->imu.gyroscope[2] = imu_data_.angular_velocity.z;
+  State_->imu.quaternion[0] = imu_data_.orientation.x;
+  State_->imu.quaternion[1] = imu_data_.orientation.y;
+  State_->imu.quaternion[2] = imu_data_.orientation.z;
+  State_->imu.quaternion[3] = imu_data_.orientation.w;
+
+  // 使用订阅到的位姿数据更新 State_
+  tf2::Quaternion q(
+      pose_data_.pose.orientation.x,
+      pose_data_.pose.orientation.y,
+      pose_data_.pose.orientation.z,
+      pose_data_.pose.orientation.w
+  );
+  tf2::Matrix3x3 m(q);
+  double roll, pitch, yaw;
+  m.getRPY(roll, pitch, yaw);
+  State_->imu.rpy[0] = roll;
+  State_->imu.rpy[1] = pitch;
+  State_->imu.rpy[2] = yaw;
+
+
 }
 
 void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cmd_)

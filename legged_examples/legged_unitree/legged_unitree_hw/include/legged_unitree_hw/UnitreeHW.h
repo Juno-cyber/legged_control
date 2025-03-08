@@ -6,8 +6,11 @@
 #pragma once
 
 #include <legged_hw/LeggedHW.h>
-#include "yesense_main.h"
 #include "soem_dog.h"
+#include <sensor_msgs/Imu.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
 #ifdef UNITREE_SDK_3_3_1
 #include "unitree_legged_sdk_3_3_1/safety.h"
@@ -78,7 +81,7 @@ class UnitreeHW : public LeggedHW {
 
   bool setupContactSensor(ros::NodeHandle& nh);
 
-  void updateLowState(::Soem_MotorData *motors_rec,::protocol_info_t* imu, UNITREE_LEGGED_SDK::LowState *State_);
+  void updateLowState(::Soem_MotorData *motors_rec, UNITREE_LEGGED_SDK::LowState *State_);
   void updateLowCmd(::Soem_Motor *motors, UNITREE_LEGGED_SDK::LowCmd *Cmd_);
 
   std::shared_ptr<UNITREE_LEGGED_SDK::UDP> udp_;
@@ -92,10 +95,18 @@ class UnitreeHW : public LeggedHW {
 
   int powerLimit_{};
   int contactThreshold_{};
+  //订阅 IMU 数据
+  void imuCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  void poseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
   ros::Publisher joyPublisher_;
   ros::Publisher contactPublisher_;
   ros::Time lastJoyPub_, lastContactPub_;
+  ros::Subscriber imu_sub_;
+  ros::Subscriber pose_sub_;
+
+  sensor_msgs::Imu imu_data_;
+  geometry_msgs::PoseStamped pose_data_;  
 };
 
 }  // namespace legged
