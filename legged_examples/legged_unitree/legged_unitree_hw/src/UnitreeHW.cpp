@@ -24,6 +24,7 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
   setupJoints();
   setupImu();
+  runsoem();
   setupContactSensor(robot_hw_nh);
 
   // #ifdef UNITREE_SDK_3_3_1
@@ -60,9 +61,9 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   contactPublisher_ = root_nh.advertise<std_msgs::Int16MultiArray>(std::string("/contact"), 10);
 
   // 订阅 IMU 数据
-  imu_sub_ = root_nh.subscribe("data", 100, &UnitreeHW::imuCallback, this);
+  imu_sub_ = root_nh.subscribe("/imu/data", 100, &UnitreeHW::imuCallback, this);
   // 订阅位姿数据
-  pose_sub_ = root_nh.subscribe("pose", 100, &UnitreeHW::poseCallback, this); 
+  pose_sub_ = root_nh.subscribe("/imu/pose", 100, &UnitreeHW::poseCallback, this); 
 
   return true;
 }
@@ -237,7 +238,8 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,UNITREE_LEGGED_SDK::
   State_->imu.rpy[1] = pitch;
   State_->imu.rpy[2] = yaw;
 
-
+  printf("sub here roll: %.2f,pitch: %.2f,yaw: %.2f\n",roll,pitch,yaw);
+  printf("sub here orientation.x: %.2f,y: %.2f,z: %.2f,w: %.2f\n",pose_data_.pose.orientation.x,pose_data_.pose.orientation.y,pose_data_.pose.orientation.z,pose_data_.pose.orientation.w);
 }
 
 void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cmd_)
@@ -255,13 +257,22 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
     motors[i].torque = Cmd_->motorCmd[i].tau;    // 力矩
     motors[i].kp = Cmd_->motorCmd[i].Kp;   // 角速度
     motors[i].kd = Cmd_->motorCmd[i].Kd;     // 力矩
-  }  
+  }
+  printf("motor 1 info: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
 }
 
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   //读取电机数据和IMU数据
+  // 获取当前时间
+  // ros::Time start_time = ros::Time::now();  
   // runsoem();
-  // updateLowState(Soem_motors_rec, &g_output_info, &lowState_);
+  soem_write_read();
+  // 获取结束时间
+  // ros::Time end_time = ros::Time::now();  
+  updateLowState(Soem_motors_rec, &lowState_);
+  // 计算时间差
+  // ros::Duration elapsed_time = end_time - start_time;
+  // ROS_INFO("Elapsed time: %.6f seconds", elapsed_time.toSec());  
 
   for (int i = 0; i < 12; ++i) {
     jointData_[i].pos_ = lowState_.motorState[i].q;
@@ -309,8 +320,7 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
   safety_->PowerProtect(lowCmd_, lowState_, powerLimit_);
 
   //写入电机数据
-  // updateLowCmd(Soem_motors, &lowCmd_);
-  // runsoem();
+  updateLowCmd(Soem_motors, &lowCmd_);
 }
 
 }  // namespace legged

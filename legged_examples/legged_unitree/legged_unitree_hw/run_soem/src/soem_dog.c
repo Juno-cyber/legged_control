@@ -145,7 +145,7 @@ void soem_write_read()
 
    if(wkc >= expectedWKC)
    {
-      printf("√ 6/6,date received!\n");
+      // printf("√ 6/6,date received!\n");
       // printf("Processdata WKC %d ,\n slve1 O:",wkc);
       // for(int j = 0 ; j < oloop; j++)
       // {
@@ -171,7 +171,7 @@ void soem_write_read()
       // }
 
       needlf = TRUE;
-      osal_usleep(5000);
+      // osal_usleep(5000);
    }
    // motors_set_zero();
    // ec_send_processdata();
@@ -186,12 +186,12 @@ void soem_init(char *ifname)
    /* initialise SOEM, bind socket to ifname */
    if (ec_init(ifname))
    {
-      printf("√ 1/6,ec_init on %s succeeded.\n", ifname);
+      // printf("√ 1/6,ec_init on %s succeeded.\n", ifname);
       /* find and auto-config slaves */
 
       if (ec_config_init(FALSE) > 0)
       {
-         printf("√ 2/6,%d slaves found and configured.\n",ec_slavecount);
+         // printf("√ 2/6,%d slaves found and configured.\n",ec_slavecount);
 
          if (forceByteAlignment)
          {
@@ -204,22 +204,22 @@ void soem_init(char *ifname)
 
          ec_configdc();
 
-         printf("√ 3/6,Slaves mapped, state to SAFE_OP.\n");
+         // printf("√ 3/6,Slaves mapped, state to SAFE_OP.\n");
          /* wait for all slaves to reach SAFE_OP state */
          ec_statecheck(0, EC_STATE_SAFE_OP,  EC_TIMEOUTSTATE * 4);
 
-         printf("*****slave1_Out_len: %d,slave1_In_len: %d \n",ec_slave[0].Obytes,ec_slave[0].Ibytes);
+         // printf("*****slave1_Out_len: %d,slave1_In_len: %d \n",ec_slave[0].Obytes,ec_slave[0].Ibytes);
          oloop = ec_slave[0].Obytes;
          if ((oloop == 0) && (ec_slave[0].Obits > 0)) oloop = 1;
 
          iloop = ec_slave[0].Ibytes;
          if ((iloop == 0) && (ec_slave[0].Ibits > 0)) iloop = 1;
 
-         printf("segments : %d : %d %d %d %d\n", ec_group[0].nsegments, ec_group[0].IOsegment[0], ec_group[0].IOsegment[1], ec_group[0].IOsegment[2], ec_group[0].IOsegment[3]);
+         // printf("segments : %d : %d %d %d %d\n", ec_group[0].nsegments, ec_group[0].IOsegment[0], ec_group[0].IOsegment[1], ec_group[0].IOsegment[2], ec_group[0].IOsegment[3]);
 
-         printf("√ 4/6,Request operational state for all slaves\n");
+         // printf("√ 4/6,Request operational state for all slaves\n");
          expectedWKC = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
-         printf("Calculated workcounter %d\n", expectedWKC);
+         // printf("Calculated workcounter %d\n", expectedWKC);
          ec_slave[0].state = EC_STATE_OPERATIONAL;
          /* send one valid process data to make outputs in slaves happy*/
          ec_send_processdata();
@@ -238,7 +238,7 @@ void soem_init(char *ifname)
 
          if (ec_slave[0].state == EC_STATE_OPERATIONAL )
          {
-            printf("√ 5/6,Operational state reached for all slaves.\n");
+            // printf("√ 5/6,Operational state reached for all slaves.\n");
             inOP = TRUE;
             /* soem_write_read */
             soem_write_read();
@@ -357,7 +357,7 @@ int runsoem()
 {
    int argc = 2;  // 默认参数个数
    char *argv[] = {"enxf8e43be97979", "enxf8e43be97979"};  // 默认参数列表      
-   printf("SOEM (Simple Open EtherCAT Master)\nSimple test\n");
+   // printf("SOEM (Simple Open EtherCAT Master)\nSimple test\n");
 
    if (argc > 1)
    {
@@ -380,7 +380,7 @@ int runsoem()
       }
       ec_free_adapters(adapter);
    }
-   printf("End program\n");
+   // printf("End program\n");
    return (0);
 }
 

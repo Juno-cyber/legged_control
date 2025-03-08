@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 								data_len = *len;
 								data_len += 7;
 								state = FIND_END;
-								printf("IMU: %f\n", g_imu.orientation.w);
+								// printf("IMU: %f\n", g_imu.orientation.w);
 								//printf("fffffffffffffffffffff");
 							}
 						} else if (state == FIND_END) {
