@@ -1,0 +1,18 @@
+<launch>
+    <!-- 启动乌龟节点 -->
+    <!-- <node pkg="turtlesim" type="turtlesim_node" name="turtlesim_node"/> -->
+    
+    <!-- 启动我们创建的手柄控制乌龟节点 -->
+    <node pkg="joy_cmd" type="joy_cmd_node" name="joy_cmd_node" output="screen"/> 
+    
+    <!-- 向参数服务器写入参数 -->
+    <param name="axis_linear_x" value="4" type="int"/>
+    <param name="axis_linear_y" value="3" type="int"/>
+    <param name="axis_angular" value="6" type="int"/>
+    
+    <!-- 启动手柄节点，respawn="true"表示节点挂掉时会自动重启 -->
+    <node respawn="true" pkg="joy" type="joy_node" name="joystick">
+        <!-- 设置手柄数据的发布频率为 50 Hz -->
+        <param name="autorepeat_rate" value="100" type="double"/>
+    </node>
+</launch>

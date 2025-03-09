@@ -304,7 +304,7 @@ void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
     handle.setKd(3.);
   }
 
-  updateJoystick(time);
+  // updateJoystick(time);
   updateContact(time);
 }
 
