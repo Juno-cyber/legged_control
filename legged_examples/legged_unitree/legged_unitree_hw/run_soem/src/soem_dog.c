@@ -82,6 +82,10 @@ void parseMotorData(const uint8_t* data, Soem_MotorData* motors, uint16_t motorC
         ptr += 4;
         motors[i].torque = bytesToFloat(ptr);
         ptr += 4;
+        if(i==5)
+        {
+         ptr += 2;
+        }
     }
 }
 
@@ -130,11 +134,11 @@ void motors_mode_set(){
 void soem_write_read()
 {
    // // 1.电机数据初始化
-   // motors_enable();
+   motors_enable();
    // // 2.设置为运控模式
    // motors_mode_set();
    // 3.写入控制值
-   motors_send_data();
+   // motors_send_data();
    // // 4.停止运行
    // motors_disable();
    // // 5.设置0位
@@ -159,9 +163,9 @@ void soem_write_read()
       // printf(" \nT:%"PRId64"\r\n",ec_DCtime);
 
       //解析报文
-      parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
+      // parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
       // 打印解析结果
-      // for (int i = 0; i < MOTOR_COUNT; i++) {
+      // for (int i = 6; i < 7; i++) {
       //    printf("Motor %d:\n", i + 1);
       //    printf("  ID: %d\n", Soem_motors_rec[i].id);
       //    printf("  State: %d\n", Soem_motors_rec[i].state);
@@ -186,12 +190,12 @@ void soem_init(char *ifname)
    /* initialise SOEM, bind socket to ifname */
    if (ec_init(ifname))
    {
-      // printf("√ 1/6,ec_init on %s succeeded.\n", ifname);
+      printf("√ 1/6,ec_init on %s succeeded.\n", ifname);
       /* find and auto-config slaves */
 
       if (ec_config_init(FALSE) > 0)
       {
-         // printf("√ 2/6,%d slaves found and configured.\n",ec_slavecount);
+         printf("√ 2/6,%d slaves found and configured.\n",ec_slavecount);
 
          if (forceByteAlignment)
          {
@@ -204,7 +208,7 @@ void soem_init(char *ifname)
 
          ec_configdc();
 
-         // printf("√ 3/6,Slaves mapped, state to SAFE_OP.\n");
+         printf("√ 3/6,Slaves mapped, state to SAFE_OP.\n");
          /* wait for all slaves to reach SAFE_OP state */
          ec_statecheck(0, EC_STATE_SAFE_OP,  EC_TIMEOUTSTATE * 4);
 
@@ -217,7 +221,7 @@ void soem_init(char *ifname)
 
          // printf("segments : %d : %d %d %d %d\n", ec_group[0].nsegments, ec_group[0].IOsegment[0], ec_group[0].IOsegment[1], ec_group[0].IOsegment[2], ec_group[0].IOsegment[3]);
 
-         // printf("√ 4/6,Request operational state for all slaves\n");
+         printf("√ 4/6,Request operational state for all slaves\n");
          expectedWKC = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
          // printf("Calculated workcounter %d\n", expectedWKC);
          ec_slave[0].state = EC_STATE_OPERATIONAL;
@@ -238,7 +242,7 @@ void soem_init(char *ifname)
 
          if (ec_slave[0].state == EC_STATE_OPERATIONAL )
          {
-            // printf("√ 5/6,Operational state reached for all slaves.\n");
+            printf("√ 5/6,Operational state reached for all slaves.\n");
             inOP = TRUE;
             /* soem_write_read */
             soem_write_read();

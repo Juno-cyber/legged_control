@@ -26,6 +26,8 @@ private:
     ros::Publisher pub;
     // 用来接收launch文件中设置的参数，绑定手柄摇杆、轴的映射
     int axis_linear_x, axis_linear_y, axis_angular;
+    // 用来接收launch文件中设置的参数，绑定手柄按钮映射
+    int gait_button_0, gait_button_1, gait_button_2;    
     // 死区大小
     double dead_zone;
     // 定义步态切换发布者
