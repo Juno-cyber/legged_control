@@ -54,7 +54,10 @@ TargetTrajectories goalToTargetTrajectories(const vector_t& goal, const SystemOb
     vector_t target(6);
     target(0) = goal(0);
     target(1) = goal(1);
-    target(2) = COM_HEIGHT;
+    // target(0) = currentPose(0);
+    // target(1) = currentPose(1); 
+    // target(2) = goal(2);
+    target(2) = COM_HEIGHT;   //COM_HEIGHT
     target(3) = goal(3);
     target(4) = 0;
     target(5) = 0;
