@@ -187,31 +187,15 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,UNITREE_LEGGED_SDK::
     State_->motorState[i].dq = motors_rec[i].velocity;   // 角速度
     State_->motorState[i].tauEst = motors_rec[i].torque;    // 力矩
     // 其他字段可以根据需要初始化或保留默认值
-    // State_->motorState[i].q_raw = 0;      // 原始角度
-    // State_->motorState[i].dq_raw = 0; // 原始角速度    
-    // State_->motorState[i].mode = 0;                     // 电机模式
-    // State_->motorState[i].ddq = 0.0f;                   // 加速度
-    // State_->motorState[i].ddq_raw = 0.0f;               // 原始加速度
-    // State_->motorState[i].temperature = 0;              // 温度
-    // State_->motorState[i].reserve[0] = 0;               // 保留字段
-    // State_->motorState[i].reserve[1] = 0;               // 保留字段
+    State_->motorState[i].q_raw = 0;      // 原始角度
+    State_->motorState[i].dq_raw = 0; // 原始角速度    
+    State_->motorState[i].mode = 0;                     // 电机模式
+    State_->motorState[i].ddq = 0.0f;                   // 加速度
+    State_->motorState[i].ddq_raw = 0.0f;               // 原始加速度
+    State_->motorState[i].temperature = 0;              // 温度
+    State_->motorState[i].reserve[0] = 0;               // 保留字段
+    State_->motorState[i].reserve[1] = 0;               // 保留字段
   }  
-  // 将imu的数据赋值给LowState的IMU
-  // State_->imu.accelerometer[0] = imu->accel.x;
-  // State_->imu.accelerometer[1] = imu->accel.y;
-  // State_->imu.accelerometer[2] = imu->accel.z;
-  // State_->imu.gyroscope[0] = imu->angle_rate.x;
-  // State_->imu.gyroscope[1] = imu->angle_rate.y;
-  // State_->imu.gyroscope[2] = imu->angle_rate.z;
-  // State_->imu.quaternion[0] = imu->attitude.quaternion_data0;
-  // State_->imu.quaternion[1] = imu->attitude.quaternion_data1;
-  // State_->imu.quaternion[2] = imu->attitude.quaternion_data2;
-  // State_->imu.quaternion[3] = imu->attitude.quaternion_data3;
-  // State_->imu.rpy[0] = imu->attitude.roll;
-  // State_->imu.rpy[1] = imu->attitude.pitch;
-  // State_->imu.rpy[2] = imu->attitude.yaw;
-  // State_->imu.temperature = (int8_t)imu->sensor_temp;  
-
   // 使用订阅到的 IMU 数据更新 State_
   State_->imu.accelerometer[0] = imu_data_.linear_acceleration.x;
   State_->imu.accelerometer[1] = imu_data_.linear_acceleration.y;
@@ -238,8 +222,8 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,UNITREE_LEGGED_SDK::
   State_->imu.rpy[1] = pitch;
   State_->imu.rpy[2] = yaw;
 
-  printf("sub here roll: %.2f,pitch: %.2f,yaw: %.2f\n",roll,pitch,yaw);
-  printf("sub here orientation.x: %.2f,y: %.2f,z: %.2f,w: %.2f\n",pose_data_.pose.orientation.x,pose_data_.pose.orientation.y,pose_data_.pose.orientation.z,pose_data_.pose.orientation.w);
+  // printf("sub here roll: %.2f,pitch: %.2f,yaw: %.2f\n",roll,pitch,yaw);
+  // printf("sub here orientation.x: %.2f,y: %.2f,z: %.2f,w: %.2f\n",pose_data_.pose.orientation.x,pose_data_.pose.orientation.y,pose_data_.pose.orientation.z,pose_data_.pose.orientation.w);
 }
 
 void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cmd_)
@@ -258,7 +242,7 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
     motors[i].kp = Cmd_->motorCmd[i].Kp;   // 角速度
     motors[i].kd = Cmd_->motorCmd[i].Kd;     // 力矩
   }
-  printf("motor 1 info: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
+  // printf("motor 1 info: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
 }
 
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
@@ -321,6 +305,7 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
 
   //写入电机数据
   updateLowCmd(Soem_motors, &lowCmd_);
+  // soem_write_read();
 }
 
 }  // namespace legged
