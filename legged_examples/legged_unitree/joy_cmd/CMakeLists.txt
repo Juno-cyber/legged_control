@@ -14,6 +14,13 @@ find_package(catkin REQUIRED COMPONENTS
   ocs2_msgs
   ocs2_legged_robot_ros
   ocs2_legged_robot
+  legged_common
+  legged_interface
+  legged_wbc
+  legged_estimation
+  controller_interface
+  ocs2_self_collision_visualization
+  angles  
 )
 
 ## System dependencies are found with CMake's conventions

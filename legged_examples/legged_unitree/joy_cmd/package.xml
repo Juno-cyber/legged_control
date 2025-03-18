@@ -62,6 +62,15 @@
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+  <depend>legged_common</depend>
+  <depend>legged_interface</depend>
+  <depend>legged_estimation</depend>
+  <depend>legged_wbc</depend>
+  <depend>controller_interface</depend>
+  <depend>ocs2_self_collision_visualization</depend>
+  <depend>angles</depend>
+  <exec_depend>controller_manager</exec_depend>  
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

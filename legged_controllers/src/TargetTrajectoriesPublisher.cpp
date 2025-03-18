@@ -67,6 +67,25 @@ TargetTrajectories goalToTargetTrajectories(const vector_t& goal, const SystemOb
   return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
 }
 
+TargetTrajectories goalToTargetTrajectories_joy(const vector_t& goal, const SystemObservation& observation) {
+  const vector_t currentPose = observation.state.segment<6>(6);
+  const vector_t targetPose = [&]() {
+    vector_t target(6);
+    // target(0) = goal(0);
+    // target(1) = goal(1);
+    target(0) = currentPose(0);
+    target(1) = currentPose(1); 
+    target(2) = goal(2);
+    // target(2) = COM_HEIGHT;   //COM_HEIGHT
+    target(3) = goal(3);
+    target(4) = 0;
+    target(5) = 0;
+    return target;
+  }();
+  const scalar_t targetReachingTime = observation.time + estimateTimeToTarget(targetPose - currentPose);
+  return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
+}
+
 TargetTrajectories cmdVelToTargetTrajectories(const vector_t& cmdVel, const SystemObservation& observation) {
   const vector_t currentPose = observation.state.segment<6>(6);
   const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);
@@ -110,7 +129,7 @@ int main(int argc, char** argv) {
   loadData::loadCppDataType(referenceFile, "targetDisplacementVelocity", TARGET_DISPLACEMENT_VELOCITY);
   loadData::loadCppDataType(taskFile, "mpc.timeHorizon", TIME_TO_TARGET);
 
-  TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories);
+  // TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories);
 
   ros::spin();
   // Successful exit

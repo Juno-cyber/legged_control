@@ -7,6 +7,7 @@
 #include <ocs2_msgs/mode_schedule.h>
 #include "ocs2_legged_robot_ros/gait/ModeSequenceTemplateRos.h"
 #include <ocs2_legged_robot/gait/ModeSequenceTemplate.h>
+#include "legged_controllers/TargetTrajectoriesPublisher.h"
 
 class Teleop_dog
 {
@@ -18,6 +19,8 @@ private:
     void callback(const sensor_msgs::Joy::ConstPtr &joy);
     // 发布步态切换命令
     void publishGait(const std::string& gait);    
+
+    void publishLieDown();
     // 实例化ROS句柄
     ros::NodeHandle nh;
     // 定义订阅者对象，用来订阅手柄发送的数据
@@ -27,7 +30,7 @@ private:
     // 用来接收launch文件中设置的参数，绑定手柄摇杆、轴的映射
     int axis_linear_x, axis_linear_y, axis_angular;
     // 用来接收launch文件中设置的参数，绑定手柄按钮映射
-    int gait_button_0, gait_button_1, gait_button_2;    
+    int gait_button_0, gait_button_1, gait_button_2,lie_down_button;    
     // 死区大小
     double dead_zone;
     // 定义步态切换发布者
