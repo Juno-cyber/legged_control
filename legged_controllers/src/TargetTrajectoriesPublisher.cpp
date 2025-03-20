@@ -67,17 +67,14 @@ TargetTrajectories goalToTargetTrajectories(const vector_t& goal, const SystemOb
   return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
 }
 
-TargetTrajectories goalToTargetTrajectories_joy(const vector_t& goal, const SystemObservation& observation) {
+TargetTrajectories laydown_ToTargetTrajectories(const vector_t& goal,const SystemObservation& observation) {
   const vector_t currentPose = observation.state.segment<6>(6);
   const vector_t targetPose = [&]() {
     vector_t target(6);
-    // target(0) = goal(0);
-    // target(1) = goal(1);
     target(0) = currentPose(0);
     target(1) = currentPose(1); 
-    target(2) = goal(2);
-    // target(2) = COM_HEIGHT;   //COM_HEIGHT
-    target(3) = goal(3);
+    target(2) = 0;
+    target(3) = currentPose(3);
     target(4) = 0;
     target(5) = 0;
     return target;
@@ -129,7 +126,7 @@ int main(int argc, char** argv) {
   loadData::loadCppDataType(referenceFile, "targetDisplacementVelocity", TARGET_DISPLACEMENT_VELOCITY);
   loadData::loadCppDataType(taskFile, "mpc.timeHorizon", TIME_TO_TARGET);
 
-  // TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories);
+  TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories, &laydown_ToTargetTrajectories);
 
   ros::spin();
   // Successful exit

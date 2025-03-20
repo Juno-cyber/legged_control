@@ -14,6 +14,7 @@
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_ros_interfaces/command/TargetTrajectoriesRosPublisher.h>
 
+#include <std_msgs/Int32.h>
 namespace legged {
 using namespace ocs2;
 
@@ -22,9 +23,10 @@ class TargetTrajectoriesPublisher final {
   using CmdToTargetTrajectories = std::function<TargetTrajectories(const vector_t& cmd, const SystemObservation& observation)>;
 
   TargetTrajectoriesPublisher(::ros::NodeHandle& nh, const std::string& topicPrefix, CmdToTargetTrajectories goalToTargetTrajectories,
-                              CmdToTargetTrajectories cmdVelToTargetTrajectories)
+                              CmdToTargetTrajectories cmdVelToTargetTrajectories, CmdToTargetTrajectories laydown_ToTargetTrajectories)
       : goalToTargetTrajectories_(std::move(goalToTargetTrajectories)),
         cmdVelToTargetTrajectories_(std::move(cmdVelToTargetTrajectories)),
+        laydown_ToTargetTrajectories_(std::move(laydown_ToTargetTrajectories)),
         tf2_(buffer_) {
     // Trajectories publisher
     targetTrajectoriesPublisher_.reset(new TargetTrajectoriesRosPublisher(nh, topicPrefix));
@@ -78,16 +80,46 @@ class TargetTrajectoriesPublisher final {
       targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);
     };
 
+    // fsm subscriber
+    auto fsmCallback = [this](const std_msgs::Int32::ConstPtr& msg) {
+      if (latestObservation_.time == 0.0) {
+        return;
+      }
+      int fsmState = msg->data;  // 获取 FSM 状态
+      vector_t cmdGoal = vector_t::Zero(6);
+      ROS_INFO("Received FSM state: %d", fsmState);  // 打印日志
+
+      // 根据 FSM 状态执行逻辑
+      switch (fsmState) {
+        case 1:
+          ROS_INFO("FSM State 1: Standby");
+          break;
+        case 2:
+          ROS_INFO("FSM State 2: Walking");
+          break;
+        case 3:
+          ROS_INFO("FSM State 3: Running");
+          break;
+        default:
+          ROS_WARN("Unknown FSM state: %d", fsmState);
+          break;
+      }
+      const auto trajectories = laydown_ToTargetTrajectories_(cmdGoal,latestObservation_);
+      targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);  
+
+    };    
+
     goalSub_ = nh.subscribe<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1, goalCallback);
     cmdVelSub_ = nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 1, cmdVelCallback);
+    FSMsub_ = nh.subscribe<std_msgs::Int32>("/FSM_schedule", 1, fsmCallback);
   }
 
  private:
-  CmdToTargetTrajectories goalToTargetTrajectories_, cmdVelToTargetTrajectories_;
+  CmdToTargetTrajectories goalToTargetTrajectories_, cmdVelToTargetTrajectories_,laydown_ToTargetTrajectories_;
 
   std::unique_ptr<TargetTrajectoriesRosPublisher> targetTrajectoriesPublisher_;
 
-  ::ros::Subscriber observationSub_, goalSub_, cmdVelSub_;
+  ::ros::Subscriber observationSub_, goalSub_, cmdVelSub_,FSMsub_;
   tf2_ros::Buffer buffer_;
   tf2_ros::TransformListener tf2_;
 

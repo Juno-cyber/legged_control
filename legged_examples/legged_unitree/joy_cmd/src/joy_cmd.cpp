@@ -11,6 +11,8 @@ Teleop_dog::Teleop_dog()
     nh.param<int>("gait_button_1", gait_button_1, 1); // 默认按钮1
     nh.param<int>("gait_button_2", gait_button_2, 2); // 默认按钮2   
     nh.param<int>("lie_down_button", lie_down_button, 3); // 趴下按钮3 
+    nh.param<int>("start_controller_button", start_controller_button, 4); // 启动控制器按钮4
+    nh.param<int>("stop_controller_button", stop_controller_button, 5); // 停止控制器按钮5
     nh.param<double>("dead_zone", dead_zone, 0.05);    // 死区大小
     nh.param<std::string>("/gaitCommandFile", gait_file_, ""); // 步态文件路径   
     if (gait_file_.empty()) {
@@ -22,6 +24,10 @@ Teleop_dog::Teleop_dog()
     pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
     mode_schedule_pub_ = nh.advertise<ocs2_msgs::mode_schedule>("legged_robot_mpc_mode_schedule", 1,true);    
     sub = nh.subscribe<sensor_msgs::Joy>("joy", 10, &Teleop_dog::callback, this);
+    FSM_schedule_pub_ = nh.advertise<std_msgs::Int32>("FSM_schedule", 1,true);
+    // 初始化服务客户端
+    controller_client_ = nh.serviceClient<controller_manager_msgs::SwitchController>("/controller_manager/switch_controller");
+
 
     // 加载步态文件并初始化步态映射
     if (!gait_file_.empty()) {
@@ -73,9 +79,15 @@ void Teleop_dog::callback(const sensor_msgs::Joy::ConstPtr &joy)
         publishGait(gait_list_[1]); // 切换到第二个步态
     } else if (joy->buttons[gait_button_2]) {
         publishGait(gait_list_[3]); // 切换到第三个步态
+    } else if (joy->buttons[start_controller_button]) {
+        switchController("controllers/legged_controller", ""); // 启动控制器
+    } else if (joy->buttons[stop_controller_button]) {
+        switchController("", "controllers/legged_controller"); // 停止控制器
     } else if (joy->buttons[lie_down_button]) {
-        publishLieDown(); // 切换到趴下模式
-    }
+        FSM_state_ = 1;
+        publishFSMState(); // 发布状态机状态
+    } 
+    
 }
 
 void Teleop_dog::publishGait(const std::string& gait){
@@ -91,104 +103,26 @@ void Teleop_dog::publishGait(const std::string& gait){
     }
 }
 
-void Teleop_dog::publishLieDown() {
-    // 这里需要将 lieDownPose 发布到目标轨迹
-    // 你可以使用类似 publishGait 的方式发布目标轨迹
-    ROS_INFO_STREAM("Switched to lie down mode");
+void Teleop_dog::publishFSMState() {
+    std_msgs::Int32 FSM_state_tmp;
+    FSM_state_tmp.data = FSM_state_;
+    FSM_schedule_pub_.publish(FSM_state_tmp);
 }
 
+// 启动或暂停控制器
+bool Teleop_dog::switchController(const std::string& start_controller, const std::string& stop_controller) {
+    controller_manager_msgs::SwitchController srv;
+    srv.request.start_controllers.push_back(start_controller);  // 启动的控制器
+    srv.request.stop_controllers.push_back(stop_controller);    // 停止的控制器
+    srv.request.strictness = controller_manager_msgs::SwitchController::Request::BEST_EFFORT;  // 设置严格模式
 
-scalar_t estimateTimeToTarget(const vector_t& desiredBaseDisplacement) {
-  const scalar_t& dx = desiredBaseDisplacement(0);
-  const scalar_t& dy = desiredBaseDisplacement(1);
-  const scalar_t& dyaw = desiredBaseDisplacement(3);
-  const scalar_t rotationTime = std::abs(dyaw) / TARGET_ROTATION_VELOCITY;
-  const scalar_t displacement = std::sqrt(dx * dx + dy * dy);
-  const scalar_t displacementTime = displacement / TARGET_DISPLACEMENT_VELOCITY;
-  return std::max(rotationTime, displacementTime);
-}
-
-TargetTrajectories targetPoseToTargetTrajectories(const vector_t& targetPose, const SystemObservation& observation,
-                                                  const scalar_t& targetReachingTime) {
-  // desired time trajectory
-  const scalar_array_t timeTrajectory{observation.time, targetReachingTime};
-
-  // desired state trajectory
-  vector_t currentPose = observation.state.segment<6>(6);
-  currentPose(2) = COM_HEIGHT;
-  currentPose(4) = 0;
-  currentPose(5) = 0;
-  vector_array_t stateTrajectory(2, vector_t::Zero(observation.state.size()));
-  stateTrajectory[0] << vector_t::Zero(6), currentPose, DEFAULT_JOINT_STATE;
-  stateTrajectory[1] << vector_t::Zero(6), targetPose, DEFAULT_JOINT_STATE;
-
-  // desired input trajectory (just right dimensions, they are not used)
-  const vector_array_t inputTrajectory(2, vector_t::Zero(observation.input.size()));
-
-  return {timeTrajectory, stateTrajectory, inputTrajectory};
-}
-
-TargetTrajectories goalToTargetTrajectories(const vector_t& goal, const SystemObservation& observation) {
-  const vector_t currentPose = observation.state.segment<6>(6);
-  const vector_t targetPose = [&]() {
-    vector_t target(6);
-    target(0) = goal(0);
-    target(1) = goal(1);
-    // target(0) = currentPose(0);
-    // target(1) = currentPose(1); 
-    // target(2) = goal(2);
-    target(2) = COM_HEIGHT;   //COM_HEIGHT
-    target(3) = goal(3);
-    target(4) = 0;
-    target(5) = 0;
-    return target;
-  }();
-  const scalar_t targetReachingTime = observation.time + estimateTimeToTarget(targetPose - currentPose);
-  return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
-}
-
-TargetTrajectories goalToTargetTrajectories_joy(const vector_t& goal, const SystemObservation& observation) {
-  const vector_t currentPose = observation.state.segment<6>(6);
-  const vector_t targetPose = [&]() {
-    vector_t target(6);
-    // target(0) = goal(0);
-    // target(1) = goal(1);
-    target(0) = currentPose(0);
-    target(1) = currentPose(1); 
-    target(2) = goal(2);
-    // target(2) = COM_HEIGHT;   //COM_HEIGHT
-    target(3) = goal(3);
-    target(4) = 0;
-    target(5) = 0;
-    return target;
-  }();
-  const scalar_t targetReachingTime = observation.time + estimateTimeToTarget(targetPose - currentPose);
-  return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
-}
-
-TargetTrajectories cmdVelToTargetTrajectories(const vector_t& cmdVel, const SystemObservation& observation) {
-  const vector_t currentPose = observation.state.segment<6>(6);
-  const Eigen::Matrix<scalar_t, 3, 1> zyx = currentPose.tail(3);
-  vector_t cmdVelRot = getRotationMatrixFromZyxEulerAngles(zyx) * cmdVel.head(3);
-
-  const scalar_t timeToTarget = TIME_TO_TARGET;
-  const vector_t targetPose = [&]() {
-    vector_t target(6);
-    target(0) = currentPose(0) + cmdVelRot(0) * timeToTarget;
-    target(1) = currentPose(1) + cmdVelRot(1) * timeToTarget;
-    target(2) = COM_HEIGHT;
-    target(3) = currentPose(3) + cmdVel(3) * timeToTarget;
-    target(4) = 0;
-    target(5) = 0;
-    return target;
-  }();
-
-  // target reaching duration
-  const scalar_t targetReachingTime = observation.time + timeToTarget;
-  auto trajectories = targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
-  trajectories.stateTrajectory[0].head(3) = cmdVelRot;
-  trajectories.stateTrajectory[1].head(3) = cmdVelRot;
-  return trajectories;
+    if (controller_client_.call(srv)) {
+        ROS_INFO("Switched controllers: started %s, stopped %s", start_controller.c_str(), stop_controller.c_str());
+        return true;
+    } else {
+        ROS_ERROR("Failed to switch controllers.");
+        return false;
+    }
 }
 
 int main(int argc, char **argv)
@@ -198,7 +132,6 @@ int main(int argc, char **argv)
     // 初始化ROS节点
     ros::init(argc, argv, "teleop_joy");
     Teleop_dog teleop_dog;
-    // TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories);
 
     // 设置循环频率为 50 Hz
     ros::Rate rate(100);

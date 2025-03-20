@@ -4,10 +4,12 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Joy.h>
+#include <std_msgs/Int32.h>
 #include <ocs2_msgs/mode_schedule.h>
 #include "ocs2_legged_robot_ros/gait/ModeSequenceTemplateRos.h"
 #include <ocs2_legged_robot/gait/ModeSequenceTemplate.h>
-#include "legged_controllers/TargetTrajectoriesPublisher.h"
+#include <controller_manager_msgs/SwitchController.h>  // 包含服务消息头文件
+
 
 class Teleop_dog
 {
@@ -20,7 +22,8 @@ private:
     // 发布步态切换命令
     void publishGait(const std::string& gait);    
 
-    void publishLieDown();
+    void publishFSMState();
+    bool switchController(const std::string& start_controller, const std::string& stop_controller);    
     // 实例化ROS句柄
     ros::NodeHandle nh;
     // 定义订阅者对象，用来订阅手柄发送的数据
@@ -30,11 +33,17 @@ private:
     // 用来接收launch文件中设置的参数，绑定手柄摇杆、轴的映射
     int axis_linear_x, axis_linear_y, axis_angular;
     // 用来接收launch文件中设置的参数，绑定手柄按钮映射
-    int gait_button_0, gait_button_1, gait_button_2,lie_down_button;    
+    int gait_button_0, gait_button_1, gait_button_2,lie_down_button,start_controller_button,stop_controller_button;    
     // 死区大小
     double dead_zone;
+    // FSM状态
+    int FSM_state_;
     // 定义步态切换发布者
-    ros::Publisher mode_schedule_pub_;    
+    ros::Publisher mode_schedule_pub_;   
+    // 定义四足状态切换发布者
+    ros::Publisher FSM_schedule_pub_; 
+    // 服务客户端，用于控制控制器
+    ros::ServiceClient controller_client_;     
 
     // 步态文件路径
     std::string gait_file_;
