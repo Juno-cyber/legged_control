@@ -15,6 +15,9 @@ Teleop_dog::Teleop_dog()
     nh.param<int>("stop_controller_button", stop_controller_button, 5); // 停止控制器按钮5
     nh.param<double>("dead_zone", dead_zone, 0.05);    // 死区大小
     nh.param<std::string>("/gaitCommandFile", gait_file_, ""); // 步态文件路径   
+    // 初始化状态机
+    current_state_ = DogState::CONTROLLER_ON;
+    
     if (gait_file_.empty()) {
         ROS_ERROR("Gait file path is empty!");
         return;
@@ -72,21 +75,24 @@ void Teleop_dog::callback(const sensor_msgs::Joy::ConstPtr &joy)
     //          vel.linear.x, vel.linear.y, vel.angular.z);
     pub.publish(vel);
 
+    // 处理手柄输入进行状态切换
+    handleInput(joy);
+
     // 根据按钮选择步态
-    if (joy->buttons[gait_button_0]) {
-        publishGait(gait_list_[0]); // 切换到第一个步态
-    } else if (joy->buttons[gait_button_1]) {
-        publishGait(gait_list_[1]); // 切换到第二个步态
-    } else if (joy->buttons[gait_button_2]) {
-        publishGait(gait_list_[3]); // 切换到第三个步态
-    } else if (joy->buttons[start_controller_button]) {
-        switchController("controllers/legged_controller", ""); // 启动控制器
-    } else if (joy->buttons[stop_controller_button]) {
-        switchController("", "controllers/legged_controller"); // 停止控制器
-    } else if (joy->buttons[lie_down_button]) {
-        FSM_state_ = 1;
-        publishFSMState(); // 发布状态机状态
-    } 
+    // if (joy->buttons[gait_button_0]) {
+    //     publishGait(gait_list_[0]); // 切换到站立步态
+    // } else if (joy->buttons[gait_button_1]) {
+    //     publishGait(gait_list_[1]); // 切换到小跑步态
+    // } else if (joy->buttons[gait_button_2]) {
+    //     publishGait(gait_list_[3]); // 切换到奔跑步态
+    // } else if (joy->buttons[start_controller_button]) {
+    //     switchController("controllers/legged_controller", ""); // 启动控制器
+    // } else if (joy->buttons[stop_controller_button]) {
+    //     switchController("", "controllers/legged_controller"); // 停止控制器
+    // } else if (joy->buttons[lie_down_button]) {
+    //     FSM_state_ = 1;
+    //     publishFSMState(); // 切换到趴下状态
+    // }
     
 }
 
@@ -124,6 +130,91 @@ bool Teleop_dog::switchController(const std::string& start_controller, const std
         return false;
     }
 }
+
+void Teleop_dog::handleInput(const sensor_msgs::Joy::ConstPtr& joy) {
+    if (joy->buttons[gait_button_0]) {
+        transitionTo(DogState::STANDING);
+    } else if (joy->buttons[gait_button_1]) {
+        transitionTo(DogState::TROTTING);
+    } else if (joy->buttons[gait_button_2]) {
+        transitionTo(DogState::GALLOPING);
+    } else if (joy->buttons[start_controller_button]) {
+        transitionTo(DogState::CONTROLLER_ON);
+    } else if (joy->buttons[stop_controller_button]) {
+        transitionTo(DogState::CONTROLLER_OFF);
+    } else if (joy->buttons[lie_down_button]) {
+        transitionTo(DogState::LYING_DOWN);
+    }
+}
+
+void Teleop_dog::transitionTo(DogState new_state) {
+    if (new_state == current_state_&&(new_state!=DogState::LYING_DOWN)) {
+        return;  // 状态未变化，直接返回
+    }
+
+    // 检查状态转移是否合法
+    if (!isTransitionValid(new_state)) {
+        ROS_WARN("Invalid state transition: from %d to %d", static_cast<int>(current_state_), static_cast<int>(new_state));
+        return;
+    }
+    // 退出当前状态
+    onStateExit(current_state_);
+    // 更新状态
+    current_state_ = new_state;
+    // 进入新状态
+    onStateEnter(new_state);
+}
+
+
+void Teleop_dog::onStateEnter(DogState new_state) {
+    switch (new_state) {
+        case DogState::STANDING:
+            publishGait(gait_list_[0]);  // 切换到站立步态
+            break;
+        case DogState::TROTTING:
+            publishGait(gait_list_[1]);  // 切换到小跑步态
+            break;
+        case DogState::GALLOPING:
+            publishGait(gait_list_[3]);  // 切换到奔跑步态
+            break;
+        case DogState::LYING_DOWN:
+            FSM_state_ = 1;
+            publishFSMState();  // 切换到趴下状态
+            break;
+        case DogState::CONTROLLER_ON:
+            switchController("controllers/legged_controller", "");  // 启动控制器
+            break;
+        case DogState::CONTROLLER_OFF:
+            switchController("", "controllers/legged_controller");  // 停止控制器
+            break;
+        default:
+            break;
+    }
+}
+
+bool Teleop_dog::isTransitionValid(DogState new_state) const {
+    switch (current_state_) {
+        case DogState::LYING_DOWN:
+            return (new_state == DogState::CONTROLLER_ON || new_state == DogState::CONTROLLER_OFF);
+        case DogState::CONTROLLER_ON:
+            return (new_state == DogState::STANDING);
+        case DogState::STANDING:
+            return (new_state == DogState::TROTTING || new_state == DogState::LYING_DOWN);
+        case DogState::TROTTING:
+            return (new_state == DogState::GALLOPING || new_state == DogState::STANDING);
+        case DogState::GALLOPING:
+            return (new_state == DogState::TROTTING);
+        case DogState::CONTROLLER_OFF:
+            return (new_state == DogState::LYING_DOWN);
+        default:
+            return false;
+    }
+}
+
+void Teleop_dog::onStateExit(DogState old_state) {
+    // 清理操作（如果需要）
+}
+
 
 int main(int argc, char **argv)
 {

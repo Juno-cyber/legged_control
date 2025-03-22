@@ -10,6 +10,15 @@
 #include <ocs2_legged_robot/gait/ModeSequenceTemplate.h>
 #include <controller_manager_msgs/SwitchController.h>  // 包含服务消息头文件
 
+enum class DogState {
+    IDLE,
+    STANDING,
+    TROTTING,
+    GALLOPING,
+    LYING_DOWN,
+    CONTROLLER_ON,
+    CONTROLLER_OFF
+};  
 
 class Teleop_dog
 {
@@ -24,6 +33,15 @@ private:
 
     void publishFSMState();
     bool switchController(const std::string& start_controller, const std::string& stop_controller);    
+
+    // 状态切换逻辑
+    void transitionTo(DogState new_state);
+    void onStateEnter(DogState new_state);
+    void onStateExit(DogState old_state);
+    void handleInput(const sensor_msgs::Joy::ConstPtr& joy);
+    // 检查状态转移是否合法
+    bool isTransitionValid(DogState new_state) const;    
+
     // 实例化ROS句柄
     ros::NodeHandle nh;
     // 定义订阅者对象，用来订阅手柄发送的数据
@@ -50,7 +68,10 @@ private:
     // 步态映射
     std::map<std::string, ocs2::legged_robot::ModeSequenceTemplate> gait_map_;
     // 步态列表
-    std::vector<std::string> gait_list_;    
+    std::vector<std::string> gait_list_;  
+    // 定义状态机对象
+    DogState current_state_;  // 当前状态
+   
 };
 
 #endif
