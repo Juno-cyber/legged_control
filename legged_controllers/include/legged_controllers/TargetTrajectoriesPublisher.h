@@ -23,10 +23,11 @@ class TargetTrajectoriesPublisher final {
   using CmdToTargetTrajectories = std::function<TargetTrajectories(const vector_t& cmd, const SystemObservation& observation)>;
 
   TargetTrajectoriesPublisher(::ros::NodeHandle& nh, const std::string& topicPrefix, CmdToTargetTrajectories goalToTargetTrajectories,
-                              CmdToTargetTrajectories cmdVelToTargetTrajectories, CmdToTargetTrajectories laydown_ToTargetTrajectories)
+                              CmdToTargetTrajectories cmdVelToTargetTrajectories, CmdToTargetTrajectories laydown_ToTargetTrajectories, CmdToTargetTrajectories stance_ToTargetTrajectories)
       : goalToTargetTrajectories_(std::move(goalToTargetTrajectories)),
         cmdVelToTargetTrajectories_(std::move(cmdVelToTargetTrajectories)),
         laydown_ToTargetTrajectories_(std::move(laydown_ToTargetTrajectories)),
+        stance_ToTargetTrajectories_(std::move(stance_ToTargetTrajectories)),
         tf2_(buffer_) {
     // Trajectories publisher
     targetTrajectoriesPublisher_.reset(new TargetTrajectoriesRosPublisher(nh, topicPrefix));
@@ -87,24 +88,9 @@ class TargetTrajectoriesPublisher final {
       }
       int fsmState = msg->data;  // 获取 FSM 状态
       vector_t cmdGoal = vector_t::Zero(6);
-      ROS_INFO("Received FSM state: %d", fsmState);  // 打印日志
 
-      // 根据 FSM 状态执行逻辑
-      switch (fsmState) {
-        case 1:
-          ROS_INFO("FSM State 1: Standby");
-          break;
-        case 2:
-          ROS_INFO("FSM State 2: Walking");
-          break;
-        case 3:
-          ROS_INFO("FSM State 3: Running");
-          break;
-        default:
-          ROS_WARN("Unknown FSM state: %d", fsmState);
-          break;
-      }
-      const auto trajectories = laydown_ToTargetTrajectories_(cmdGoal,latestObservation_);
+      const auto trajectories = fsmState==0?laydown_ToTargetTrajectories_(cmdGoal,latestObservation_):stance_ToTargetTrajectories_(cmdGoal,latestObservation_);
+
       targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);  
 
     };    
@@ -115,7 +101,7 @@ class TargetTrajectoriesPublisher final {
   }
 
  private:
-  CmdToTargetTrajectories goalToTargetTrajectories_, cmdVelToTargetTrajectories_,laydown_ToTargetTrajectories_;
+  CmdToTargetTrajectories goalToTargetTrajectories_, cmdVelToTargetTrajectories_,laydown_ToTargetTrajectories_,stance_ToTargetTrajectories_;
 
   std::unique_ptr<TargetTrajectoriesRosPublisher> targetTrajectoriesPublisher_;
 

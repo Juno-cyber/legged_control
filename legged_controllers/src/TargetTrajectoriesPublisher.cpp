@@ -14,6 +14,7 @@ namespace {
 scalar_t TARGET_DISPLACEMENT_VELOCITY;
 scalar_t TARGET_ROTATION_VELOCITY;
 scalar_t COM_HEIGHT;
+scalar_t COM_HEIGHT_reg;
 vector_t DEFAULT_JOINT_STATE(12);
 scalar_t TIME_TO_TARGET;
 }  // namespace
@@ -77,6 +78,24 @@ TargetTrajectories laydown_ToTargetTrajectories(const vector_t& goal,const Syste
     target(3) = currentPose(3);
     target(4) = 0;
     target(5) = 0;
+    COM_HEIGHT = 0;
+    return target;
+  }();
+  const scalar_t targetReachingTime = observation.time + estimateTimeToTarget(targetPose - currentPose);
+  return targetPoseToTargetTrajectories(targetPose, observation, targetReachingTime);
+}
+
+TargetTrajectories stance_ToTargetTrajectories(const vector_t& goal,const SystemObservation& observation) {
+  const vector_t currentPose = observation.state.segment<6>(6);
+  const vector_t targetPose = [&]() {
+    vector_t target(6);
+    COM_HEIGHT = COM_HEIGHT_reg;
+    target(0) = currentPose(0);
+    target(1) = currentPose(1); 
+    target(2) = COM_HEIGHT;
+    target(3) = currentPose(3);
+    target(4) = 0;
+    target(5) = 0;
     return target;
   }();
   const scalar_t targetReachingTime = observation.time + estimateTimeToTarget(targetPose - currentPose);
@@ -121,12 +140,13 @@ int main(int argc, char** argv) {
   nodeHandle.getParam("/taskFile", taskFile);
 
   loadData::loadCppDataType(referenceFile, "comHeight", COM_HEIGHT);
+  loadData::loadCppDataType(referenceFile, "comHeight", COM_HEIGHT_reg);
   loadData::loadEigenMatrix(referenceFile, "defaultJointState", DEFAULT_JOINT_STATE);
   loadData::loadCppDataType(referenceFile, "targetRotationVelocity", TARGET_ROTATION_VELOCITY);
   loadData::loadCppDataType(referenceFile, "targetDisplacementVelocity", TARGET_DISPLACEMENT_VELOCITY);
   loadData::loadCppDataType(taskFile, "mpc.timeHorizon", TIME_TO_TARGET);
 
-  TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories, &laydown_ToTargetTrajectories);
+  TargetTrajectoriesPublisher target_pose_command(nodeHandle, robotName, &goalToTargetTrajectories, &cmdVelToTargetTrajectories, &laydown_ToTargetTrajectories, &stance_ToTargetTrajectories);
 
   ros::spin();
   // Successful exit
