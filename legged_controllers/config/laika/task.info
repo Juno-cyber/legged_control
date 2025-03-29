@@ -280,7 +280,7 @@ selfCollision
   delta   1e-3
 }
 
-; Whole body control
+; Whole body control 33.5
 torqueLimitsTask
 {
    (0,0)  33.5     ; HAA

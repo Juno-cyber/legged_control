@@ -115,9 +115,9 @@ void motors_enable(){
 
 void motors_send_data(){
    // 初始化电机变量（这里只是示例值，可以根据需要修改）顺序是 角度(弧度)、角速度（rad/s）、力矩（Nm）、kp、kd
-   for (int i = 0; i < MOTOR_COUNT; i++) {
-      motor_set(&Soem_motors[i], 5.2, 1, 1, 20, 1);
-   }
+   // for (int i = 0; i < MOTOR_COUNT; i++) {
+   //    motor_set(&Soem_motors[i], 2, 1, 1, 1, 0.1);
+   // }
    set_send_data(0x0004);
 }
 
@@ -134,11 +134,11 @@ void motors_mode_set(){
 void soem_write_read()
 {
    // // 1.电机数据初始化
-   motors_enable();
+   // motors_enable();
    // // 2.设置为运控模式
    // motors_mode_set();
    // 3.写入控制值
-   // motors_send_data();
+   motors_send_data();
    // // 4.停止运行
    // motors_disable();
    // // 5.设置0位
@@ -163,16 +163,20 @@ void soem_write_read()
       // printf(" \nT:%"PRId64"\r\n",ec_DCtime);
 
       //解析报文
-      // parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
+      parseMotorData(ec_slave[0].inputs, Soem_motors_rec, MOTOR_COUNT);
       // 打印解析结果
-      // for (int i = 6; i < 7; i++) {
-      //    printf("Motor %d:\n", i + 1);
-      //    printf("  ID: %d\n", Soem_motors_rec[i].id);
-      //    printf("  State: %d\n", Soem_motors_rec[i].state);
-      //    printf("  Position: %.2f\n", Soem_motors_rec[i].position);
-      //    printf("  Velocity: %.2f\n", Soem_motors_rec[i].velocity);
-      //    printf("  Torque: %.2f\n", Soem_motors_rec[i].torque);
-      // }
+      // printf("POS: ");
+      for (int i = 0; i < MOTOR_COUNT; i++) {
+         // printf("Motor %d:\n", i + 1);
+         // printf("  ID: %d\n", Soem_motors_rec[i].id);
+         // printf("  State: %d\n", Soem_motors_rec[i].state);
+         // printf("  Position: %.2f\n", Soem_motors_rec[i].position);
+         // printf("  Velocity: %.2f\n", Soem_motors_rec[i].velocity);
+         // printf("  Torque: %.2f\n", Soem_motors_rec[i].torque);
+         // printf("M%d:%.2f; ", i, Soem_motors_rec[i].position);
+      }
+      printf("\n");
+      // printf("POS: M1:%.2f,M2:%.2f,M3:%.2f,M4:%.2f,M5:%.2f,M6:%.2f,M7:%.2f,M8:%.2f,M9:%.2f,M10:%.2f,M11:%.2f,M12:%.2f,")
 
       needlf = TRUE;
       // osal_usleep(5000);
@@ -360,7 +364,7 @@ void ecatcheck( void *ptr )
 int runsoem()
 {
    int argc = 2;  // 默认参数个数
-   char *argv[] = {"enxf8e43be97979", "enxf8e43be97979"};  // 默认参数列表      
+   char *argv[] = {"enxf8e43be97979", "enp86s0"};  // 默认参数列表      
    // printf("SOEM (Simple Open EtherCAT Master)\nSimple test\n");
 
    if (argc > 1)

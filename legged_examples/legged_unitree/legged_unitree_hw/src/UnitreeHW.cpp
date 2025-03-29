@@ -239,10 +239,21 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
     motors[i].angle = Cmd_->motorCmd[i].q;    // 角度
     motors[i].angular_vel = Cmd_->motorCmd[i].dq;   // 角速度
     motors[i].torque = Cmd_->motorCmd[i].tau;    // 力矩
-    motors[i].kp = Cmd_->motorCmd[i].Kp;   // 角速度
-    motors[i].kd = Cmd_->motorCmd[i].Kd;     // 力矩
+    motors[i].kp = Cmd_->motorCmd[i].Kp;   // kp
+    motors[i].kd = Cmd_->motorCmd[i].Kd;     // kd
+    printf("motor %d calcu: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",i,motors[i].angle,motors[i].angular_vel,motors[i].torque,motors[i].kp,motors[i].kd);    
   }
-  // printf("motor 1 info: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
+  // printf("motor 1 calcu: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
+  for (int i = 0; i < MOTOR_COUNT; i++) {
+    // 将 Soem_Motor 的roslaunch legged_controllers load_controller.launch cheater:=false数据赋值给 LowState 的 MotorState
+    // motors[i].angle = 1;    // 角度
+    motors[i].angular_vel = 0;   // 角速度
+    motors[i].torque = 0;    // 力矩
+    motors[i].kp = 0;   // kp
+    motors[i].kd = 0;     // kd
+    // printf("motor %d final: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",i,motors[i].angle,motors[i].angular_vel,motors[i].torque,motors[i].kp,motors[i].kd);        
+  }  
+  // printf("motor 1 final: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
 }
 
 void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
@@ -305,7 +316,7 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
 
   //写入电机数据
   updateLowCmd(Soem_motors, &lowCmd_);
-  // soem_write_read();
+  soem_write_read();
 }
 
 }  // namespace legged
