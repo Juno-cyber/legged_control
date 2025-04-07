@@ -130,13 +130,14 @@ void Teleop_dog::handleInput(const sensor_msgs::Joy::ConstPtr& joy) {
 }
 
 void Teleop_dog::transitionTo(DogState new_state) {
-    if (new_state == current_state_&&(new_state!=DogState::LYING_DOWN)) {
+    if (new_state == current_state_) {
+        ROS_INFO_STREAM("current_state_:"<<static_cast<int>(current_state_));
         return;  // 状态未变化，直接返回
     }
 
     // 检查状态转移是否合法
     if (!isTransitionValid(new_state)) {
-        ROS_WARN("Invalid state transition: from %d to %d", static_cast<int>(current_state_), static_cast<int>(new_state));
+        ROS_WARN("Invalid transition: from %d to %d", static_cast<int>(current_state_), static_cast<int>(new_state));
         return;
     }
     // 退出当前状态
@@ -163,6 +164,7 @@ void Teleop_dog::onStateEnter(DogState new_state) {
             publishGait(gait_list_[3]);     // 切换到奔跑步态
             break;
         case DogState::LYING_DOWN:          // 趴下状态
+            ROS_INFO_STREAM("Switched to gait: LYING_DOWN");
             FSM_state_ = 0;
             publishFSMState();              // 切换到趴下状态                   
             break;

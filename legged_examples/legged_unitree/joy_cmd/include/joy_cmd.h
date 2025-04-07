@@ -11,13 +11,12 @@
 #include <controller_manager_msgs/SwitchController.h>  // 包含服务消息头文件
 
 enum class DogState {
-    IDLE,
+    CONTROLLER_OFF,
+    LYING_DOWN,
     STANDING,
     TROTTING,
     GALLOPING,
-    LYING_DOWN,
     CONTROLLER_ON,
-    CONTROLLER_OFF
 };  
 
 class Teleop_dog
