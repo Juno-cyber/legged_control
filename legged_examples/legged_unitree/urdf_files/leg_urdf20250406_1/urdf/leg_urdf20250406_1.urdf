@@ -665,7 +665,7 @@
     </collision>
   </link>
   <joint
-    name="FR_KFE"
+    name="RF_KFE"
     type="revolute">
     <origin
       xyz="0.024642 -0.0759 -0.28146"

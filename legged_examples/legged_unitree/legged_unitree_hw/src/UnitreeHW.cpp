@@ -222,7 +222,7 @@ void UnitreeHW::updateLowState(::Soem_MotorData* motors_rec,UNITREE_LEGGED_SDK::
   State_->imu.rpy[1] = pitch;
   State_->imu.rpy[2] = yaw;
 
-  // printf("sub here roll: %.2f,pitch: %.2f,yaw: %.2f\n",roll,pitch,yaw);
+  printf("sub here roll: %.2f,pitch: %.2f,yaw: %.2f\n",roll,pitch,yaw);
   // printf("sub here orientation.x: %.2f,y: %.2f,z: %.2f,w: %.2f\n",pose_data_.pose.orientation.x,pose_data_.pose.orientation.y,pose_data_.pose.orientation.z,pose_data_.pose.orientation.w);
 }
 

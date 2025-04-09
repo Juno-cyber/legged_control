@@ -11,7 +11,19 @@
     <xacro:include filename="$(find urdf_trans_pkg)/common/imu.xacro"/>
     
     <xacro:include filename="$(find leg_urdf20250406_1)/urdf/$(arg urdf_name).urdf" />
-    <xacro:IMU connected_to="base" imu_name="base_imu" xyz="0. 0. 0." rpy="0. 0. 0."/>
+    <!-- <xacro:IMU connected_to="base" imu_name="base_imu" xyz="0. 0. 0." rpy="0. 0. 0."/> -->
 
+
+    <!-- <xacro:leg prefix="LF" >
+    </xacro:leg>
+
+    <xacro:leg prefix="LH" >
+    </xacro:leg>
+
+    <xacro:leg prefix="RF" >
+    </xacro:leg>
+
+    <xacro:leg prefix="RH" >
+    </xacro:leg> -->
 
 </robot>
