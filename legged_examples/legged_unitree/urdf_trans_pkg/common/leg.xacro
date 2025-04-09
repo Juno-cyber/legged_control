@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:include filename="$(find legged_unitree_description)/urdf/common/transmission.xacro"/>
+    <xacro:include filename="$(find urdf_trans_pkg)/common/transmission.xacro"/>
 
     <xacro:macro name="leg" params="prefix">
 
