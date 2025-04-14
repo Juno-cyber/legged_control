@@ -1016,7 +1016,7 @@
       xyz="0 0 0" />
   </joint>
   <link
-    name="bae_imu">
+    name="base_imu">
     <inertial>
       <origin
         xyz="-0.140227009526513 0.02366124132454 0.0203176869881753"
