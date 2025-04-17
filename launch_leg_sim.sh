@@ -7,6 +7,7 @@ gnome-terminal --title="GAZEBO" -- bash -c \
   "echo '窗口1: Gazebo环境 (ROBOT_TYPE=$ROBOT_TYPE)'; 
    export ROBOT_TYPE=$ROBOT_TYPE; 
    source devel/setup.bash;
+   rospack find leg_urdf20250417_1;
    roslaunch legged_unitree_description load_urdf.launch; 
    exec bash"
 
@@ -17,6 +18,7 @@ gnome-terminal --title="CONTROLLER" -- bash -c \
   "echo '窗口2: 控制器加载 (ROBOT_TYPE=$ROBOT_TYPE)'; 
    export ROBOT_TYPE=$ROBOT_TYPE; 
    source devel/setup.bash;
+   rospack find leg_urdf20250417_1;
    roslaunch legged_controllers load_controller.launch cheater:=false; 
    exec bash"
 

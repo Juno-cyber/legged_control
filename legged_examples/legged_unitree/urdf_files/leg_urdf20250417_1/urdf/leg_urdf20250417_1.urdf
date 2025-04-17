@@ -26,7 +26,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/base.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/base.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/base.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/base.STL" />
       </geometry>
     </collision>
   </link>
@@ -66,7 +66,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_hip.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_hip.STL" />
       </geometry>
     </collision>
   </link>
@@ -124,7 +124,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_thigh.STL" />
       </geometry>
       <material
         name="">
@@ -138,7 +138,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_thigh.STL" />
       </geometry>
     </collision>
   </link>
@@ -182,7 +182,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_calf.STL" />
       </geometry>
       <material
         name="">
@@ -196,7 +196,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_calf.STL" />
       </geometry>
     </collision>
   </link>
@@ -240,7 +240,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_FOOT.STL" />
       </geometry>
       <material
         name="">
@@ -254,7 +254,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LF_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LF_FOOT.STL" />
       </geometry>
     </collision>
   </link>
@@ -291,7 +291,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_hip.STL" />
       </geometry>
       <material
         name="">
@@ -305,7 +305,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_hip.STL" />
       </geometry>
     </collision>
   </link>
@@ -349,7 +349,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_thigh.STL" />
       </geometry>
       <material
         name="">
@@ -363,7 +363,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_thigh.STL" />
       </geometry>
     </collision>
   </link>
@@ -407,7 +407,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_calf.STL" />
       </geometry>
       <material
         name="">
@@ -421,7 +421,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_calf.STL" />
       </geometry>
     </collision>
   </link>
@@ -465,7 +465,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_FOOT.STL" />
       </geometry>
       <material
         name="">
@@ -479,7 +479,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/LH_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/LH_FOOT.STL" />
       </geometry>
     </collision>
   </link>
@@ -516,7 +516,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_hip.STL" />
       </geometry>
       <material
         name="">
@@ -530,7 +530,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_hip.STL" />
       </geometry>
     </collision>
   </link>
@@ -574,7 +574,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_thigh.STL" />
       </geometry>
       <material
         name="">
@@ -588,7 +588,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_thigh.STL" />
       </geometry>
     </collision>
   </link>
@@ -632,7 +632,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_calf.STL" />
       </geometry>
       <material
         name="">
@@ -646,7 +646,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_calf.STL" />
       </geometry>
     </collision>
   </link>
@@ -690,7 +690,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_FOOT.STL" />
       </geometry>
       <material
         name="">
@@ -704,7 +704,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RF_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RF_FOOT.STL" />
       </geometry>
     </collision>
   </link>
@@ -741,7 +741,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_hip.STL" />
       </geometry>
       <material
         name="">
@@ -755,7 +755,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_hip.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_hip.STL" />
       </geometry>
     </collision>
   </link>
@@ -799,7 +799,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_thigh.STL" />
       </geometry>
       <material
         name="">
@@ -813,7 +813,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_thigh.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_thigh.STL" />
       </geometry>
     </collision>
   </link>
@@ -857,7 +857,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_calf.STL" />
       </geometry>
       <material
         name="">
@@ -871,7 +871,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_calf.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_calf.STL" />
       </geometry>
     </collision>
   </link>
@@ -915,7 +915,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_FOOT.STL" />
       </geometry>
       <material
         name="">
@@ -929,7 +929,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://leg_urdf20250417_1/meshes/RH_FOOT.STL" />
+          filename="$(find leg_urdf20250417_1)/meshes/RH_FOOT.STL" />
       </geometry>
     </collision>
   </link>
