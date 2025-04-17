@@ -39,8 +39,7 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="$(find leg_urdf20250417_1)/meshes/base.STL" />
+        <box size="0.267 0.194 0.114"/>
       </geometry>
     </collision>
   </link>
@@ -147,7 +146,7 @@
     type="revolute">
     <origin
       xyz="0.0627 0.0624 0"
-      rpy="0 0 0" />
+      rpy="0 1 0" />
     <parent
       link="LF_hip" />
     <child
@@ -372,7 +371,7 @@
     type="revolute">
     <origin
       xyz="-0.0632 0.0195 0"
-      rpy="0 0 0" />
+      rpy="0 1 0" />
     <parent
       link="LH_hip" />
     <child
@@ -597,7 +596,7 @@
     type="revolute">
     <origin
       xyz="0.0632 -0.0195 0"
-      rpy="0 0 0" />
+      rpy="0 1 0" />
     <parent
       link="RF_hip" />
     <child
@@ -822,7 +821,7 @@
     type="revolute">
     <origin
       xyz="-0.04479 -0.037843 0.0022486"
-      rpy="0 0 0" />
+      rpy="0 1 0" />
     <parent
       link="RH_hip" />
     <child
