@@ -95,6 +95,9 @@
       link="LF_hip" />
     <axis
       xyz="1 0 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>  
+    <dynamics damping="0" friction="0"/>    
     <limit
       lower="-1.05"
       upper="1.05"
@@ -153,6 +156,9 @@
       link="LF_thigh" />
     <axis
       xyz="0 1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions> 
+    <dynamics damping="0" friction="0"/>     
     <limit
       lower="-1.57"
       upper="3.35"
@@ -211,6 +217,9 @@
       link="LF_calf" />
     <axis
       xyz="0 1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>  
+    <dynamics damping="0" friction="0"/>    
     <limit
       lower="0"
       upper="2.2"
@@ -267,6 +276,9 @@
       link="LF_calf" />
     <child
       link="LF_FOOT" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>   
+    <dynamics damping="0" friction="0"/>   
   </joint>
   <link
     name="LH_hip">
@@ -320,6 +332,9 @@
       link="LH_hip" />
     <axis
       xyz="-1 0 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>  
+    <dynamics damping="0" friction="0"/>   
     <limit
       lower="-1.05"
       upper="1.05"
@@ -378,6 +393,9 @@
       link="LH_thigh" />
     <axis
       xyz="0 1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
     <limit
       lower="-1.57"
       upper="3.35"
@@ -436,6 +454,9 @@
       link="LH_calf" />
     <axis
       xyz="0 1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>      
+    <dynamics damping="0" friction="0"/>
     <limit
       lower="0"
       upper="2.2"
@@ -492,6 +513,9 @@
       link="LH_calf" />
     <child
       link="LH_FOOT" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
   </joint>
   <link
     name="RF_hip">
@@ -545,6 +569,9 @@
       link="RF_hip" />
     <axis
       xyz="1 0 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions> 
+    <dynamics damping="0" friction="0"/>     
     <limit
       lower="-1.05"
       upper="1.05"
@@ -603,6 +630,9 @@
       link="RF_thigh" />
     <axis
       xyz="0 -1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
     <limit
       lower="-3.35"
       upper="1.57"
@@ -661,6 +691,9 @@
       link="RF_calf" />
     <axis
       xyz="0 -1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
     <limit
       lower="-2.2"
       upper="0"
@@ -717,6 +750,9 @@
       link="RF_calf" />
     <child
       link="RF_FOOT" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions> 
+    <dynamics damping="0" friction="0"/>     
   </joint>
   <link
     name="RH_hip">
@@ -770,6 +806,9 @@
       link="RH_hip" />
     <axis
       xyz="-1 0 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
     <limit
       lower="-1.05"
       upper="1.05"
@@ -828,6 +867,9 @@
       link="RH_thigh" />
     <axis
       xyz="0 -1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions> 
+    <dynamics damping="0" friction="0"/>     
     <limit
       lower="-3.35"
       upper="1.57"
@@ -886,6 +928,9 @@
       link="RH_calf" />
     <axis
       xyz="0 -1 0" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>
+    <dynamics damping="0" friction="0"/>      
     <limit
       lower="-2.2"
       upper="0"
@@ -942,5 +987,8 @@
       link="RH_calf" />
     <child
       link="RH_FOOT" />
+    <!-- 忽略这两个link之间的碰撞检测 -->
+    <disable_collisions>true</disable_collisions>    
+    <dynamics damping="0" friction="0"/>  
   </joint>
 </robot>

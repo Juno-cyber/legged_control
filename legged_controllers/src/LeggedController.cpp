@@ -133,6 +133,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
 
   for (size_t j = 0; j < leggedInterface_->getCentroidalModelInfo().actuatedDofNum; ++j) {
     hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0, 3, torque(j));
+    // 0-11的顺序是左前、左后、右前、右后腿的髋关节、膝关节、踝关节
     printf("M-%d: pos:%.2f, vel:%.2f, torque:%.2f.\n",int(j), posDes(j), velDes(j), torque(j));
   }
 

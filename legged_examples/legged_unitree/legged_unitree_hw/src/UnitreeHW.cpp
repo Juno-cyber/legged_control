@@ -241,6 +241,7 @@ void UnitreeHW::updateLowCmd(::Soem_Motor* motors,UNITREE_LEGGED_SDK::LowCmd* Cm
     motors[i].torque = Cmd_->motorCmd[i].tau;    // 力矩
     motors[i].kp = Cmd_->motorCmd[i].Kp;   // kp
     motors[i].kd = Cmd_->motorCmd[i].Kd;     // kd
+    // 0-11的顺序是右前、左前、右后、左后腿的髋关节、膝关节、踝关节
     printf("motor %d calcu: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",i,motors[i].angle,motors[i].angular_vel,motors[i].torque,motors[i].kp,motors[i].kd);    
   }
   // printf("motor 1 calcu: angle=%.2f,angular_vel=%.2f,torque=%.2f,kp=%.2f,kd=%.2f \n",motors[1].angle,motors[1].angular_vel,motors[1].torque,motors[1].kp,motors[1].kd);
