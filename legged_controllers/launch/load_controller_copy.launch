@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+
+<launch>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type: [a1, aliengo, go1, laikago, laika]"/>
+
+    <arg name="cheater" default="false"/>
+
+    <!-- make the files into global parameters -->
+    <param name="urdfFile" value="/tmp/legged_control/$(arg robot_type).urdf"/>
+    <param name="taskFile" value="$(find legged_controllers)/config/$(arg robot_type)/task_copy.info"/>
+    <param name="referenceFile" value="$(find legged_controllers)/config/$(arg robot_type)/reference_copy.info"/>
+    <param name="gaitCommandFile" value="$(find legged_controllers)/config/$(arg robot_type)/gait.info"/>
+
+    <rosparam file="$(find legged_controllers)/config/controllers.yaml" command="load"/>
+
+    <node if="$(arg cheater)" name="controller_loader" pkg="controller_manager" type="controller_manager"
+          output="screen" args="load
+          controllers/joint_state_controller
+          controllers/legged_controller
+          controllers/legged_cheater_controller
+"/>
+
+    <!-- <node unless="$(arg cheater)" name="controller_loader" pkg="controller_manager" type="controller_manager"
+          output="screen" args="load
+          controllers/joint_state_controller
+          controllers/legged_controller -->
+    <node unless="$(arg cheater)" name="controller_loader" pkg="controller_manager" type="controller_manager"
+          output="screen" args="load
+          controllers/legged_controller          
+"/>
+
+    <node pkg="ocs2_legged_robot_ros" type="legged_robot_gait_command" name="legged_robot_gait_command"
+          output="screen"/>
+
+    <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target"
+          output="screen"/>
+
+      <!-- 开启手柄控制node -->
+    <node pkg="joy_cmd" type="joy_cmd_node" name="joy_cmd_node" output="screen"/> 
+    
+    <!-- 向参数服务器写入参数 -->
+    <param name="axis_linear_x" value="4" type="int"/>
+    <param name="axis_linear_y" value="3" type="int"/>
+    <param name="axis_angular" value="6" type="int"/>
+    <param name="gait_button_0" value="0" type="int"/>
+    <param name="gait_button_1" value="1" type="int"/>
+    <param name="gait_button_2" value="2" type="int"/>
+    <param name="lie_down_button" value="3" type="int"/>
+    <param name="start_controller_button" value="4" type="int"/>
+    <param name="stop_controller_button" value="5" type="int"/>
+
+    
+    <!-- 启动手柄节点，respawn="true"表示节点挂掉时会自动重启 -->
+    <node respawn="true" pkg="joy" type="joy_node" name="joystick">
+        <!-- 设置手柄数据的发布频率为 50 Hz -->
+        <param name="autorepeat_rate" value="100" type="double"/>
+    </node>      
+
+</launch>

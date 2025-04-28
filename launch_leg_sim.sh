@@ -21,8 +21,8 @@ gnome-terminal --title="CONTROLLER" -- bash -c \
    exec bash"
 
 # 窗口3：启动RQT界面
-# gnome-terminal --title="RQT" -- bash -c \
-#   "echo '窗口3: RQT控制界面（手动点击 Plugins > Robot Tools > Controller Manager）'; 
-#    source devel/setup.bash;
-#    rqt;
-#    exec bash"
+gnome-terminal --title="RQT" -- bash -c \
+  "echo '窗口3: RQT控制界面（手动点击 Plugins > Robot Tools > Controller Manager）'; 
+   source devel/setup.bash;
+   rqt;
+   exec bash"

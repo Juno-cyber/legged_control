@@ -39,8 +39,9 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="file:///$(find leg_urdf20250417_1)/meshes/base.STL" />
+        <box size="0.41 0.23 0.137"/>
+        <!-- <mesh
+          filename="file:///$(find leg_urdf20250417_1)/meshes/base.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -79,6 +80,7 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
+        <!-- <cylinder length="0.0576" radius="0.046"/> -->
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LF_hip.STL" />
       </geometry>
@@ -140,10 +142,17 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
+        <!-- <box size="0.282 0.03 0.03"/> -->
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LF_thigh.STL" />
       </geometry>
     </collision>
+    <!-- <collision>
+      <origin rpy="1.5707963267948966 0 0" xyz="0 0.02 0"/>
+      <geometry>
+        <cylinder length="0.0576" radius="0.046"/>
+      </geometry>
+    </collision>     -->
   </link>
   <joint
     name="LF_HFE"
@@ -262,8 +271,9 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="file:///$(find leg_urdf20250417_1)/meshes/LF_FOOT.STL" />
+        <sphere radius="0.02"/>
+        <!-- <mesh
+          filename="file:///$(find leg_urdf20250417_1)/meshes/LF_FOOT.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -316,6 +326,7 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
+        <!-- <cylinder length="0.0576" radius="0.046"/> -->
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LH_hip.STL" />
       </geometry>
@@ -372,15 +383,22 @@
           rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
       </material>
     </visual>
+    <!-- <collision>
+      <origin rpy="1.5707963267948966 0 0" xyz="0 0.06 0"/>
+      <geometry>
+        <cylinder length="0.0576" radius="0.046"/>
+      </geometry>
+    </collision>      -->
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 0"/>
       <geometry>
+        <!-- <box size="0.282 0.03 0.03"/> -->
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LH_thigh.STL" />
       </geometry>
-    </collision>
+    </collision>    
   </link>
   <joint
     name="LH_HFE"
@@ -499,8 +517,9 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="file:///$(find leg_urdf20250417_1)/meshes/LH_FOOT.STL" />
+        <sphere radius="0.02"/>
+        <!-- <mesh
+          filename="file:///$(find leg_urdf20250417_1)/meshes/LH_FOOT.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -736,8 +755,9 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="file:///$(find leg_urdf20250417_1)/meshes/RF_FOOT.STL" />
+        <sphere radius="0.02"/>
+        <!-- <mesh
+          filename="file:///$(find leg_urdf20250417_1)/meshes/RF_FOOT.STL" /> -->
       </geometry>
     </collision>
   </link>
@@ -973,8 +993,9 @@
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="file:///$(find leg_urdf20250417_1)/meshes/RH_FOOT.STL" />
+        <sphere radius="0.02"/>
+        <!-- <mesh
+          filename="file:///$(find leg_urdf20250417_1)/meshes/RH_FOOT.STL" /> -->
       </geometry>
     </collision>
   </link>
