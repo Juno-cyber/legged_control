@@ -137,16 +137,16 @@
           rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
-      <geometry>
+      <geometry> -->
         <!-- <box size="0.282 0.03 0.03"/> -->
-        <mesh
+        <!-- <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LF_thigh.STL" />
       </geometry>
-    </collision>
+    </collision> -->
     <!-- <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0.02 0"/>
       <geometry>
@@ -205,7 +205,7 @@
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -213,7 +213,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LF_calf.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="LF_KFE"
@@ -246,10 +246,10 @@
         value="0.0259775757821095" />
       <inertia
         ixx="2.79592928416496E-06"
-        ixy="-1.63313531925429E-12"
+        ixy="0"
         ixz="1.34865618051156E-06"
         iyy="6.06492352296267E-06"
-        iyz="-1.56243203041687E-12"
+        iyz="0"
         izz="5.00319213757495E-06" />
     </inertial>
     <visual>
@@ -389,16 +389,16 @@
         <cylinder length="0.0576" radius="0.046"/>
       </geometry>
     </collision>      -->
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0"/>
-      <geometry>
+      <geometry> -->
         <!-- <box size="0.282 0.03 0.03"/> -->
-        <mesh
+        <!-- <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LH_thigh.STL" />
       </geometry>
-    </collision>    
+    </collision>     -->
   </link>
   <joint
     name="LH_HFE"
@@ -451,7 +451,7 @@
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -459,7 +459,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/LH_calf.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="LH_KFE"
@@ -492,10 +492,10 @@
         value="0.0259775757821096" />
       <inertia
         ixx="2.79592928416496E-06"
-        ixy="-1.6331353904199E-12"
+        ixy="0"
         ixz="1.34865618051155E-06"
         iyy="6.06492352296266E-06"
-        iyz="-1.56243197839901E-12"
+        iyz="0"
         izz="5.00319213757494E-06" />
     </inertial>
     <visual>
@@ -628,7 +628,7 @@
           rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -636,7 +636,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/RF_thigh.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RF_HFE"
@@ -689,7 +689,7 @@
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -697,7 +697,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/RF_calf.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RF_KFE"
@@ -730,10 +730,10 @@
         value="0.0259777190681024" />
       <inertia
         ixx="2.79593674615042E-06"
-        ixy="-4.46950623717648E-12"
+        ixy="0"
         ixz="1.34866647099014E-06"
         iyy="6.06496341868077E-06"
-        iyz="-4.02748106747732E-12"
+        iyz="0"
         izz="5.00322920227979E-06" />
     </inertial>
     <visual>
@@ -866,7 +866,7 @@
           rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -874,7 +874,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/RH_thigh.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RH_HFE"
@@ -927,7 +927,7 @@
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
@@ -935,7 +935,7 @@
         <mesh
           filename="file:///$(find leg_urdf20250417_1)/meshes/RH_calf.STL" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RH_KFE"
@@ -968,10 +968,10 @@
         value="0.025977719068102" />
       <inertia
         ixx="2.79593674615039E-06"
-        ixy="-4.46950620699933E-12"
+        ixy="0"
         ixz="1.34866647099013E-06"
         iyy="6.06496341868069E-06"
-        iyz="-4.02748110374564E-12"
+        iyz="0"
         izz="5.00322920227976E-06" />
     </inertial>
     <visual>
