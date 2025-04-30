@@ -4,9 +4,9 @@
 Teleop_dog::Teleop_dog()
 {
     // 从参数服务器读取的参数
-    nh.param<int>("axis_linear_x", axis_linear_x, 1);  // x方向速度对应的摇杆轴
-    nh.param<int>("axis_linear_y", axis_linear_y, 0);  // y方向速度对应的摇杆轴
-    nh.param<int>("axis_angular", axis_angular, 2);   // 角速度对应的摇杆轴
+    nh.param<int>("axis_linear_x", axis_linear_x, 3);  // x方向速度对应的摇杆轴
+    nh.param<int>("axis_linear_y", axis_linear_y, 2);  // y方向速度对应的摇杆轴
+    nh.param<int>("axis_angular", axis_angular, 0);   // 角速度对应的摇杆轴
     nh.param<int>("gait_button_0", gait_button_0, 0); // 默认按钮0
     nh.param<int>("gait_button_1", gait_button_1, 1); // 默认按钮1
     nh.param<int>("gait_button_2", gait_button_2, 2); // 默认按钮2   
@@ -30,7 +30,6 @@ Teleop_dog::Teleop_dog()
     FSM_schedule_pub_ = nh.advertise<std_msgs::Int32>("FSM_schedule", 1,true);
     // 初始化服务客户端
     controller_client_ = nh.serviceClient<controller_manager_msgs::SwitchController>("/controller_manager/switch_controller");
-
 
     // 加载步态文件并初始化步态映射
     if (!gait_file_.empty()) {

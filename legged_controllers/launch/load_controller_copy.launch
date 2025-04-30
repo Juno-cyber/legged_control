@@ -39,9 +39,9 @@
     <node pkg="joy_cmd" type="joy_cmd_node" name="joy_cmd_node" output="screen"/> 
     
     <!-- 向参数服务器写入参数 -->
-    <param name="axis_linear_x" value="4" type="int"/>
-    <param name="axis_linear_y" value="3" type="int"/>
-    <param name="axis_angular" value="6" type="int"/>
+    <param name="axis_linear_x" value="3" type="int"/>
+    <param name="axis_linear_y" value="2" type="int"/>
+    <param name="axis_angular" value="0" type="int"/>
     <param name="gait_button_0" value="0" type="int"/>
     <param name="gait_button_1" value="1" type="int"/>
     <param name="gait_button_2" value="2" type="int"/>
